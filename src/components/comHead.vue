@@ -2,7 +2,10 @@
 
 <template>
 	<div class="head_wrap row j_c_b">
-		<img src="@/assets/images/logo1.png" class="logo">
+        <div class="logo_wrap row">
+            <img src="@/assets/images/logo1.png" class="logo">
+            穆言科技
+        </div>
         <div class="user_wrap">
             用户
         </div>

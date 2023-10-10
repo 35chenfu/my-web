@@ -1,6 +1,7 @@
 
 :root {
   --el-color-primary: #f8949a !important;
+  --el-button-bg-primary: #f8949a !important;
 }
 body,p{
     margin: 0;
@@ -13,22 +14,6 @@ body,p{
     display: none;
   }
   
-  .el-loading-spinner .path{
-    stroke: #00E2F9 !important;
-  }
-  .el-input__wrapper{
-    box-shadow: none !important;
-  }
-  .el-input__wrapper.is-focus {
-      box-shadow: none !important;
-  }
-  
-  .el-textarea__inner{
-      box-shadow: none !important;
-  }
-  .el-textarea__inner.is-focus {
-      box-shadow: none !important;
-  }
   .detailPopover {
     padding: 0!important;
   

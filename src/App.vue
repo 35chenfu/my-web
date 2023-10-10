@@ -31,6 +31,7 @@ import menuList from './components/menuList.vue';
 	.container{
 		align-items: flex-start;
 		flex: 1;
+		width: 100%;
 		.menu_wrap{
 			height: 100%;
 		}

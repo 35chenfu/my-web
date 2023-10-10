@@ -4,10 +4,20 @@ import vue from '@vitejs/plugin-vue'
 import autoprefixer from 'autoprefixer';
 import postCssPxToRem from 'postcss-pxtorem';
 import { resolve } from 'path';
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import ElementPlus from 'unplugin-element-plus/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [vue()],
+	plugins: [
+        vue(),
+        ElementPlus({
+            useSource: true,
+          }),
+       
+    ],
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -18,10 +28,11 @@ export default defineConfig({
         host: '0.0.0.0',
         port:8000,
     },
+    
 	css: {
         preprocessorOptions: {
             scss: {
-                additionalData: `@import "@/assets/mixin.scss";`,
+                additionalData: ` @use "@/assets/element.scss" as *;`,
             },
         },
         postcss: {
