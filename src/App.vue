@@ -38,6 +38,8 @@ import menuList from './components/menuList.vue';
 		.page_con{
 			flex: 1;
 			padding: 20px;
+			overflow-y: scroll;
+			height:calc(100vh - 150px);
 		}
 	}
 }

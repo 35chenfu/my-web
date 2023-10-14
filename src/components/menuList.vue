@@ -7,7 +7,7 @@
 			</el-icon>
 		</div>
 		<!-- default-active="/menuManage"  -->
-		<el-menu class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
+		<el-menu :default-active="defaultActivee" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
 			@close="handleClose" :router="true">
 			<template v-for="(item,index) in menuData" :key="index">
 				<template v-if="item.children">
@@ -37,8 +37,10 @@
 </template>
   
 <script lang="ts" setup>
-import { ref,reactive } from 'vue'
+import { ref,reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router';
 
+const route = useRoute()
 let menuData=reactive([
 	{
 		title:'商品管理',
@@ -73,7 +75,12 @@ let menuData=reactive([
 		]
 	},
 ])
+let defaultActivee=ref('')
 
+onMounted(()=>{
+	console.log(route.path)
+	defaultActivee.value=route.path
+})
 const isCollapse = ref(false)
 const handleOpen = (key: string, keyPath: string[]) => {
 	console.log(key, keyPath)
