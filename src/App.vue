@@ -1,10 +1,10 @@
 <template>
 	<div class="window_page col">
-		<div class="head">
+		<div class="head" v-if="$route.meta.showHead">
 			<comHead></comHead>
 		</div>
 		<div class="container row">
-			<div class="menu_wrap">
+			<div class="menu_wrap"  v-if="$route.meta.showMenu">
 				<menuList></menuList>
 			</div>
 			<div class="page_con">

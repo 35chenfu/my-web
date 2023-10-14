@@ -6,7 +6,8 @@
 				<Grid />
 			</el-icon>
 		</div>
-		<el-menu default-active="/menuManage" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
+		<!-- default-active="/menuManage"  -->
+		<el-menu class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
 			@close="handleClose" :router="true">
 			<template v-for="(item,index) in menuData" :key="index">
 				<template v-if="item.children">
@@ -47,9 +48,14 @@ let menuData=reactive([
 	},
 	{
 		title:'用户管理',
-		path:'2',
+		path:'/user',
 		icon:'User',
 		
+	},
+	{
+		title:'角色管理',
+		path:'/role',
+		icon:'User',
 	},
 	{
 		title:'系统管理',

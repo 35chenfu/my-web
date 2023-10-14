@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router/index';
-import { setStorage, getStorage, getStorageAll, removeStorage, clearStorage, timeZone } from '@/utils/storage';
 import { nextTick } from 'vue';
 const version = '1.0.1';
 const http:any = axios.create({
     // baseURL: import.meta.env.VITE_APP_API_URL,
-    // baseURL: 'http://umate.test/api',
+    baseURL: 'http://7g26jc.natappfree.cc/',
+    // baseURL: '',
     timeout: 20000,
     headers: {
         'Content-Type': 'application/json',
@@ -32,14 +32,12 @@ http.interceptors.request.use(
     (config: any) => {
         config.headers = {
             data: null,
-            lang: getStorage('lang') || 'zhCN',
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            'Time-Zone': timeZone(),
         };
 
-        if (getStorage('token')) {
-            config.headers.Authorization = 'Bearer ' + getStorage('token');
+        if (localStorage.getItem('token')) {
+            config.headers.Authorization = localStorage.getItem('token');
         }
         return config;
     },
@@ -50,7 +48,7 @@ http.interceptors.request.use(
 http.interceptors.response.use(
     (res) => {
         let { url } = res.config;
-        if (res.data.status_code == 200) {
+        if (res.data.success) {
             return Promise.resolve(res.data);
         } else {
             return Promise.reject(res.data);
@@ -58,7 +56,7 @@ http.interceptors.response.use(
     },
     (err) => {
         if (err.response.status == 401) {
-            clearStorage();
+            // clearStorage();
             router.push('/login');
         } else {
             ElMessage.error(err.response.data.message);
