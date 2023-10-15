@@ -9,7 +9,7 @@
         <div class="user_wrap cur_po">
             <el-dropdown @command="command">
                 <span class="el-dropdown-link">
-                    admin
+                    {{ userInfoStore.userInfo.name }}
                     <el-icon class="el-icon--right">
                         <arrow-down />
                     </el-icon>
@@ -27,7 +27,9 @@
 import { ref, reactive, getCurrentInstance, onMounted, onActivated, nextTick, computed, watch } from 'vue';
 import http from '@/utils/http';
 import { useRouter, useRoute } from 'vue-router';
+import useStore from '@/store';
 
+const {  userInfoStore} = useStore();
 const router = useRouter()
 function command(e:any){
     if(e=='logout'){
@@ -37,6 +39,9 @@ function command(e:any){
         })
     }
 }
+onMounted(()=>{
+    userInfoStore.getUserInfo() 
+})
 </script>
 
 <style scoped lang="scss">

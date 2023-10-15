@@ -26,8 +26,8 @@
 
 					<el-menu-item  :index="item.path">
 						<el-icon :size="20">
-								<component class="icons" :is="item.icon"></component>
-							</el-icon>
+							<component class="icons" :is="item.icon"></component>
+						</el-icon>
 						<template #title>{{ item.title }}</template>
 					</el-menu-item>
 				</template>

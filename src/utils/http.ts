@@ -5,7 +5,8 @@ import { nextTick } from 'vue';
 const version = '1.0.1';
 const http:any = axios.create({
     // baseURL: import.meta.env.VITE_APP_API_URL,
-    baseURL: 'http://7g26jc.natappfree.cc/',
+    baseURL: 'http://ra5vqu.natappfree.cc/',
+    // baseURL: 'http://7g26jc.natappfree.cc/',
     // baseURL: '',
     timeout: 20000,
     headers: {

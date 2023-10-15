@@ -1,3 +1,16 @@
 
 $color:#f8949a;
 
+.icon_dropdown{
+    .icon_wrap{
+        width: 320px;
+        flex-wrap: wrap;
+        .icon{
+            padding: 10px;
+        }
+    }
+    .el-dropdown-menu__item:not(.is-disabled):focus{
+        background-color: #fff;
+        color: #000;
+    }
+}

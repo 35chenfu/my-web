@@ -25,16 +25,6 @@ function login(){
         password:password.value
     }).then(res=>{
         localStorage.setItem('token',res.result)
-        getInfo()
-        // router.push('/')
-    })
-}
-function getInfo(){
-    http.get('my-system/user/info',{
-        params:{
-        }
-    }).then(res=>{
-
         router.push('/')
     })
 }

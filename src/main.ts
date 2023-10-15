@@ -1,5 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { createPinia } from 'pinia';
+const pinia = createPinia();
+
 import '@/assets/main.scss'
 // import '@/assets/element.scss'
 import '@/utils/rem';
@@ -17,6 +20,7 @@ const app = createApp(App);
 for (const name in ElIcons){
 	app.component(name,(ElIcons as any)[name])
 }
+app.use(pinia);
 app.use(router);
 app.use(ElementPlus,{locale})
 app.mount('#app')

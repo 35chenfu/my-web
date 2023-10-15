@@ -8,7 +8,7 @@ function getListHook(method,url:any,data:any) {
 
     let tableList:any=ref([])
     let tableTotal=ref(0)
-    const getTableList=(method,url:any,data:any)=>{
+    const getTableList=(method,url:any,data:any,pageFrom:any='')=>{
         return new Promise((resolve)=>{
             http[method](url,data).then((res:any)=>{
                 // resolve(res)
