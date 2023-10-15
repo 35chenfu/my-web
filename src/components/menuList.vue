@@ -9,16 +9,16 @@
 		<!-- default-active="/menuManage"  -->
 		<el-menu :default-active="defaultActivee" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
 			@close="handleClose" :router="true">
-			<template v-for="(item,index) in menuData" :key="index">
+			<template v-for="(item,index) in roleMenus" :key="index">
 				<template v-if="item.children">
 					<el-sub-menu :index="item.path">
 						<template #title>
 							<el-icon>
 								<component   :is="item.icon" ></component>
 							</el-icon>
-							<span>{{ item.title }}</span>
+							<span>{{ item.menuName }}</span>
 						</template>
-						<el-menu-item v-for="(el,ei) in item.children" :key="ei" :index="el.path">{{ el.title }}</el-menu-item>
+						<el-menu-item v-for="(el,ei) in item.children" :key="ei" :index="el.path">{{ el.menuName }}</el-menu-item>
 						
 					</el-sub-menu>
 				</template>
@@ -28,7 +28,7 @@
 						<el-icon :size="20">
 							<component class="icons" :is="item.icon"></component>
 						</el-icon>
-						<template #title>{{ item.title }}</template>
+						<template #title>{{ item.menuName }}</template>
 					</el-menu-item>
 				</template>
 			</template>
@@ -37,9 +37,11 @@
 </template>
   
 <script lang="ts" setup>
-import { ref,reactive, onMounted } from 'vue'
+import { ref,reactive, onMounted,computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
+import useStore from '@/store';
 
+const {  userInfoStore} = useStore();
 const route = useRoute()
 let menuData=reactive([
 	{
@@ -77,8 +79,11 @@ let menuData=reactive([
 ])
 let defaultActivee=ref('')
 
+let roleMenus=computed(()=>{
+	return userInfoStore.userInfo.roleMenus
+})
 onMounted(()=>{
-	console.log(route.path)
+	console.log(userInfoStore.userInfo)
 	defaultActivee.value=route.path
 })
 const isCollapse = ref(false)

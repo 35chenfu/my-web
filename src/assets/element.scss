@@ -1,6 +1,19 @@
 
 $color:#f8949a;
 
+.el-button--primary{
+    --el-button-active-color:rgba(248,148,154,0.8) !important;
+    --el-button-hover-bg-color:rgba(248,148,154,0.8) !important;
+    --el-button-active-bg-color:rgba(248,148,154,0.8) !important;
+    --el-button-active-border-color:rgba(248,148,154,0.8) !important;
+    --el-button-border-color:rgba(248,148,154,0.8) !important;
+}
+.el-button {
+    border: none !important;
+    &:focus-visible {
+    }
+   
+}
 .icon_dropdown{
     .icon_wrap{
         width: 320px;

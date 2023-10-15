@@ -1,153 +1,177 @@
-
 :root {
   --el-color-primary: #f8949a !important;
   --el-button-bg-primary: #f8949a !important;
 }
-body,p{
-    margin: 0;
-    scrollbar-width:none;
-  }
-  *{
-    scrollbar-width:none
-  }
-  ::-webkit-scrollbar{
-    display: none;
-  }
-  
-  .detailPopover {
-    padding: 0!important;
-  
-  }
-  
-  #app {
-    margin: 0 auto;
-    font-weight: normal;
-    background-color: #fff;
-    overflow: hidden;
-    min-height: 100vh;
-    /* min-width: 1200px;
+
+body,
+p {
+  margin: 0;
+  scrollbar-width: none;
+}
+
+* {
+  scrollbar-width: none
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.detailPopover {
+  padding: 0 !important;
+
+}
+
+#app {
+  margin: 0 auto;
+  font-weight: normal;
+  background-color: #fff;
+  overflow: hidden;
+  min-height: 100vh;
+  /* min-width: 1200px;
     position: fixed;
     width: 100vw;
     top: 0;
     left: 0; */
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.j_c_a {
+  justify-content: space-around;
+}
+
+.j_c_b {
+  justify-content: space-between;
+}
+
+.j_c_c {
+  justify-content: center;
+}
+
+.cur_po {
+  cursor: pointer;
+}
+
+.f_b {
+  font-weight: bold;
+}
+
+.f_c_0 {
+  color: #000;
+}
+
+.request_loading {
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+}
+
+.scroll_y {
+  overflow-y: scroll;
+  height: calc(100vh - 90px);
+}
+
+.mt10 {
+  margin-top: 10px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.mt50 {
+  margin-top: 50px;
+}
+
+.ml10 {
+  margin-left: 10px;
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.def_btn {
+  background-color: #00E2F9;
+  color: #000;
+  border-radius: 8px;
+  font-size: 18px;
+  text-align: center;
+  height: 48px;
+  line-height: 48px;
+  cursor: pointer;
+}
+
+.one_hidden {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
+}
+
+.two_hidden {
+  word-break: break-all !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2;
+  overflow: hidden !important;
+}
+
+.three_hidden {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.avatar {
+  isolation: isolate;
+}
+
+.message_box {
+  background-color: red;
+}
+
+@media screen and (max-width: 480px) {
+
+  select,
+  textarea,
+  input {
+    font-size: 16px;
   }
-  
-  .row{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+
+  #app {
+    min-width: 100vw;
+    width: 100vw;
+    font-weight: normal;
+    background-color: #F4F6F7;
+    position: relative;
+    /* overflow: auto; */
+    height: auto;
+    min-height: auto;
   }
-  .col{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+
+  .scroll_y {
+    height: calc(100vh);
   }
-  .j_c_a{
-    justify-content: space-around;
-  }
-  .j_c_b{
-    justify-content: space-between;
-  }
-  .j_c_c{
-    justify-content: center;
-  }
-  
-  .cur_po{
-    cursor: pointer;
-  }
-  .f_b{
-    font-weight: bold;
-  }
-  .f_c_0{
-    color: #000;
-  }
-  .request_loading{
-    text-align: center;
-    color: #666;
-    font-size: 12px;
-  }
-  .scroll_y{
-    overflow-y: scroll;
-    height: calc(100vh - 90px );
-  }
-  
-  .mt10{
-    margin-top: 10px;
-  }
-  .mt20{
-    margin-top: 20px;
-  }
-  .mt50{
-    margin-top: 50px;
-  }
-  .ml10{
-    margin-left: 10px;
-  }
-  .ml20{
-    margin-left: 20px;
-  }
-  .def_btn{
-    background-color: #00E2F9;
-    color: #000;
-    border-radius: 8px;
-    font-size: 18px;
-    text-align: center;
-    height: 48px;
-    line-height: 48px;
-    cursor: pointer;
-  }
-  
-  .one_hidden{
-      overflow: hidden;
-      text-overflow:ellipsis;
-      white-space: nowrap;
-    word-break: break-all;
-  }
-  .two_hidden{
-      word-break: break-all !important;
-      text-overflow: ellipsis !important;
-      display: -webkit-box !important;
-      -webkit-box-orient: vertical !important;
-      -webkit-line-clamp: 2; 
-      overflow: hidden !important;
-  }
-  .three_hidden{
-      text-overflow: -o-ellipsis-lastline;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-      -webkit-box-orient: vertical;
-  }
-  .avatar{
-    isolation: isolate;
-  }
-  .message_box{
-    background-color: red;
-  }
-  
-  @media screen and (max-width: 480px) {
-    select,
-    textarea,
-    input {
-      font-size: 16px;
-    }
-    #app {
-      min-width: 100vw;
-      width: 100vw;
-      font-weight: normal;
-      background-color: #F4F6F7;
-      position: relative;
-      /* overflow: auto; */
-      height:auto;
-      min-height: auto;
-    }
-    .scroll_y{
-      height: calc(100vh);
-    }
-  }
-  .pagination_wrap{
-    margin-top: 10px;
-    justify-content: flex-end;
+}
+
+.pagination_wrap {
+  margin-top: 10px;
+  justify-content: flex-end;
 }

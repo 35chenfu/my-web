@@ -3,7 +3,7 @@
 <template>
 	<div class="user_page">
 		<div class="button">
-            <el-button @click="dialogTableVisible=true">新增用户</el-button>
+            <el-button @click="dialogTableVisible=true" type="primary">新增用户</el-button>
         </div>
         <div class="table_wrap mt20">
             <el-table :data="tableList" border >
@@ -14,10 +14,11 @@
                 <el-table-column label="邮箱" prop="email" align="center"></el-table-column>
                 <!-- <el-table-column label="密码" prop="password" align="center"></el-table-column> -->
                 <el-table-column label="地址" prop="address" align="center"></el-table-column>
-                <el-table-column label="操作"  align="center">
+                <el-table-column label="操作"  align="center" width="250">
                     <template #default="scope">
                         <el-button  type="primary" size="small" @click="btnHandle( scope.row, 1)">编辑</el-button>
                         <el-button  type="warning" size="small" @click="btnHandle( scope.row, 2)">删除</el-button>
+                        <el-button  type="warning" size="small" @click="btnHandle( scope.row, 3)">角色设置</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -50,9 +51,9 @@
                 <el-form-item label="邮箱" >
                     <el-input v-model="form.email" autocomplete="off" />
                 </el-form-item>
-                <!-- <el-form-item label="密码" >
+                <el-form-item label="密码" >
                     <el-input v-model="form.password" autocomplete="off" />
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="地址" >
                     <el-input v-model="form.address" autocomplete="off" />
                 </el-form-item>
@@ -66,6 +67,20 @@
                 </span>
             </template>
         </el-dialog>
+        <el-dialog v-model="roleDialog" width="30%" title="设置用户角色">
+            <el-select v-model="roleVal" placeholder="请选择角色">
+                <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id" />
+            </el-select>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button >取消</el-button>
+                    <el-button type="primary" @click="setRole">
+                    确定
+                    </el-button>
+                </span>
+            </template>
+        </el-dialog>
+        
 	</div>
 </template>
 <script setup lang="ts">
@@ -85,9 +100,9 @@ let queryData=reactive({
 let {tableList,getTableList,tableTotal}=getListHook(method,requestUrl,queryData)
 const router = useRouter();
 
-let tabledata=ref([])
 
 let dialogTableVisible=ref(false)
+let roleDialog=ref(false)
 let form=ref({
     id:'',
     name:'',
@@ -100,8 +115,9 @@ let form=ref({
 })
 let updateForm:any=ref({})
 onMounted(async ()=>{
-   
+    getRoleList()
 })
+
 watch(dialogTableVisible,(val)=>{
     if(!val){
         form.value={
@@ -116,13 +132,23 @@ watch(dialogTableVisible,(val)=>{
         }
     }
 })
-
+let roleList=reactive([])
+let roleVal=ref('')
+let selectUserId=ref('')
+function getRoleList() {
+	http.post('my-system/role/list', {
+		page: 1,
+		size: 100,
+		keyword: '',
+	}).then(res => {
+		roleList.push(...res.rows)
+	})
+}
 function btnHandle(data:any,val:any){
     if(val==1){
         form.value=JSON.parse(JSON.stringify(data))
-        console.log(form.value)
         dialogTableVisible.value=true
-    }else{
+    }else if(val==2){
         ElMessageBox.confirm('确认删除此用户吗？','提示',{
             confirmButtonText: '确认',
             cancelButtonText: '取消',
@@ -133,14 +159,25 @@ function btnHandle(data:any,val:any){
                 getTableList(method,requestUrl,queryData)
             })
         })
+    }else{
+        selectUserId.value=data.id
+        roleDialog.value=true
     }
 }
 function submit(){
     let url=form.value.id?'my-system/user/update':'my-system/user/add'
     http.post(url,form.value).then(res=>{
         getTableList(method,requestUrl,queryData)
-        
         dialogTableVisible.value=false
+    })
+}
+function setRole(){
+    http.post('my-system/role/empowerUserRole',{
+        userId:selectUserId.value,
+        roleId:roleVal.value,
+    }).then(res=>{
+        
+        roleDialog.value=false
     })
 }
 function handleSizeChange(e:any){

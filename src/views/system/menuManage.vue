@@ -7,6 +7,13 @@
         </div>
         <el-table class="mt20" :data="tableList" border row-key="id"  :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
             <el-table-column label="菜单名称" prop="menuName"> </el-table-column>
+            <el-table-column label="图标" prop="icon">
+                <template #default="scope">
+                    <el-icon :size="20">
+                        <component class="icons" :is="scope.row.icon"></component>
+                    </el-icon>
+                </template>
+            </el-table-column>
             <el-table-column label="类型" prop="sort">
                 <template #default="scope">
                     {{ scope.row.type==1 ? '目录' : '菜单' }}
@@ -20,7 +27,7 @@
                     {{ scope.row.status==1 ? '启用' : '禁用' }}
                 </template>
             </el-table-column>
-            <el-table-column label="remark" prop="sort"></el-table-column>
+            <el-table-column label="备注" prop="remark"></el-table-column>
 
             <el-table-column label="操作" width="250">
                 <template #default="scope">
@@ -62,7 +69,6 @@
                 </el-form-item>
                 <el-form-item label="图标" >
                     <!-- <el-input v-model="form.icon" autocomplete="off" /> -->
-
                     <el-dropdown trigger="click" popper-class="icon_dropdown">
                         <div class="el-dropdown-link cur_po row">
                             
@@ -152,13 +158,13 @@ let form:any=ref({
     icon:'',
     path:'',
     component:'',
-    status:1,
+    status:'1',
     sort:"",
     remark:'',
 })
 
 let iconList=[
-    'Message','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting','Setting',
+    'House','Setting','User','Box','ShoppingBag','Coin','PriceTag','Paperclip','Files','Document','Notebook','Postcard','Location'
 ]
 let typeList=[
     {value:'1',label:'目录'},
@@ -180,6 +186,24 @@ watch(tableList,(data:any)=>{
 
     }
 })
+watch(dialogTableVisible,(val)=>{
+    if(!val){
+        activeIcon.value=''
+        form.value={
+            id:'',
+            menuName:"",
+            pid:'',
+            type:'',
+            icon:'',
+            path:'',
+            component:'',
+            status:'1',
+            sort:"",
+            remark:'',
+        }
+    }
+})
+
 
 
 function swithcChange(e:any,data:any){
@@ -195,6 +219,7 @@ function btnHandle(data:any,type:any){
     if(type==1){
         form.value=selectDMenuInfo.value
         dialogTableVisible.value=true
+        activeIcon.value= selectDMenuInfo.value.icon
     }else if(type==2){
         form.value['parentMenName']=data.menuName
         form.value.pid=data.id
@@ -213,8 +238,8 @@ function btnHandle(data:any,type:any){
     }
 }
 function selectIcon(data:any){
-    console.log(data)
     activeIcon.value=data
+    form.value.icon=data
 }
 function submit(){
     let url=form.value.id?'my-system/menu/update':'my-system/menu/add'
