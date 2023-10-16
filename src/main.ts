@@ -13,6 +13,20 @@ import 'element-plus/dist/index.css';
 import * as ElIcons from '@element-plus/icons'
 import router from './router';
 
+import { ElMessage } from 'element-plus';
+router.beforeEach((to, form, next) => {
+    try {
+        if (to.meta.isLogin && !localStorage.getItem('token')) {
+            ElMessage.error('请先登录');
+            router.push('/login');
+        } else {
+            next();
+        }  
+    } catch (error) {
+        console.log('main',error)
+    }
+    
+});
 
 
 const app = createApp(App);

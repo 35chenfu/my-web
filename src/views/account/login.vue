@@ -1,13 +1,17 @@
 
 
 <template>
-	<div class="">
-		<div class="login_wrap">
-            <el-input v-model="accountNumber" placeholder="请输入账号"></el-input>
-            <el-input v-model="password" placeholder="请输入账号"></el-input>
-            <el-button @click="login">登录</el-button>
+	<div class="login_wrap ">
+        <div class="row">
+            账号<el-input class="input"  v-model="accountNumber" placeholder="请输入账号"></el-input>
         </div>
-	</div>
+        <div class="row">
+            密码<el-input class="input mt20"  v-model="password" placeholder="请输入密码"></el-input>
+        </div>
+        
+        
+        <el-button @click="login" type="primary" style="width: 50%;" class="mt20">登录</el-button>
+    </div>
 </template>
 <script setup lang="ts">
 import { ref, reactive, getCurrentInstance, onMounted, onActivated, nextTick,computed,watch } from 'vue';
@@ -33,6 +37,14 @@ function login(){
 
 <style scoped lang="scss">
 	.login_wrap{
-
+        width: 500px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        .input{
+            width: 200px;
+            margin-left: 20px;
+        }
     }
 </style>
