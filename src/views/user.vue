@@ -34,8 +34,8 @@
             </div>
             
         </div>
-        <el-dialog v-model="dialogTableVisible" width="50%">
-            <el-form :model="form" label-width="50px">
+        <el-dialog v-model="dialogTableVisible" width="40%" title="新增用户">
+            <el-form :model="form" label-width="100px">
                 <el-form-item label="账号" >
                     <el-input v-model="form.accountNumber" autocomplete="off" />
                 </el-form-item>
@@ -60,7 +60,7 @@
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button >Cancel</el-button>
+                    <el-button @click="dialogTableVisible=false">取消</el-button>
                     <el-button type="primary" @click="submit">
                     确定
                     </el-button>
@@ -73,7 +73,7 @@
             </el-select>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button >取消</el-button>
+                    <el-button @click="roleDialog=false">取消</el-button>
                     <el-button type="primary" @click="setRole">
                     确定
                     </el-button>

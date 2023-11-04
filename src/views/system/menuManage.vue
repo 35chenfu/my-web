@@ -48,7 +48,7 @@
                 @current-change="handleCurrentChange"
             />
             </div>
-        <el-dialog v-model="dialogTableVisible" >
+        <el-dialog v-model="dialogTableVisible" width="40%">
             <el-form :model="form" label-width="100px">
                 <el-form-item label="上级菜单" v-if="form['parentMenName']">
                     <span>{{form['parentMenName']  }}</span>
@@ -121,7 +121,7 @@
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button >Cancel</el-button>
+                    <el-button @click="dialogTableVisible=false">取消</el-button>
                     <el-button type="primary" @click="submit">
                     确定
                     </el-button>
