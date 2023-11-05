@@ -1,81 +1,7 @@
 import { ElMessage } from 'element-plus';
-import i18n from '@/assets/lang/i18n';
+import {JSEncrypt} from 'jsencrypt'
+
 let timeout: any = null;
-
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider,TwitterAuthProvider } from 'firebase/auth';
-
-export const googleLogin = () => {
-    const firebaseConfig = {
-        apiKey: "AIzaSyDfQpvmtttOa0h__QorKUKV0qkbH_BOtjY",
-        authDomain: "dev-auth.umate.me",
-        projectId: "um-web-390908",
-        storageBucket: "um-web-390908.appspot.com",
-        messagingSenderId: "464842429918",
-        appId: "1:464842429918:web:9c15a0baf87313c16af94f",
-        measurementId: "G-XZNSWB70YQ"
-    };
-    const app = initializeApp(firebaseConfig);
-    const provider = new GoogleAuthProvider();
-    
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential: any = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            console.log('谷歌登录的用户信息：', user);
-            // ...
-        })
-        .catch((error) => {
-            // 此处处理错误。
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // 使用的用户帐户的电子邮件。
-            const email = error.customData.email;
-            // 使用的AuthCredential类型。
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
-        });
-};
-
-export const twitterlogin=()=>{
-    const firebaseConfig = {
-        apiKey: "AIzaSyDfQpvmtttOa0h__QorKUKV0qkbH_BOtjY",
-        authDomain: "um-web-390908.firebaseapp.com",
-        projectId: "um-web-390908",
-        storageBucket: "um-web-390908.appspot.com",
-        messagingSenderId: "464842429918",
-        appId: "1:464842429918:web:9c15a0baf87313c16af94f",
-        measurementId: "G-XZNSWB70YQ"
-    };
-    const app = initializeApp(firebaseConfig);
-    const provider = new TwitterAuthProvider();
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential: any = TwitterAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            console.log('推特登录的用户信息：', user);
-            // ...
-        })
-        .catch((error) => {
-            console.log('推特登录报错',error)
-            // 此处处理错误。
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // 使用的用户帐户的电子邮件。
-            const email = error.customData.email;
-            // 使用的AuthCredential类型。
-            const credential = TwitterAuthProvider.credentialFromError(error);
-            // ...
-        });
-}
 
 export const debounce = (func: any, wait = 500, ams = [], immediate = false) => {
     // 清除定时器
@@ -170,3 +96,11 @@ export const copyDomText = (id: any, shareTxt = i18n.global.t('news.hasBeenCopie
         });
     }
 };
+
+
+export const encryptByPublicKey=(password:any)=>{
+    let publicKey='MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3m6CGmIWVUBHV+ACqSQ3oRVB4xuRu84zzJ0eH/oNb+Qhs/jNVdHyCQ/mTuANGJS+LAqbAvVJOyNgcYfsSGm7n7fuuffr9YdXgkv4i6xqe6i+Ahinhr6Htcv7wej/s8lA0dhCnw74KuSm+0rhwiqqnPeMfj4mibSsfzL6XbranfQIDAQAB'
+    let encrypt : JSEncrypt = new JSEncrypt()
+    encrypt.setPublicKey(publicKey)
+    return <string>encrypt.encrypt(password)
+}

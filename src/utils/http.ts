@@ -48,7 +48,16 @@ http.interceptors.request.use(
 );
 http.interceptors.response.use(
     (res) => {
-        let { url } = res.config;
+        let code = res.data.code
+        if(code==11012 || code==11013){
+            ElMessage.error('身份认证失效，请重新登录');
+            localStorage.clear()
+            router.push({path:'/login'})
+        }else if(code==11014 || code==11015){
+            ElMessage.error('账号别处登录，被挤下线');
+            localStorage.clear()
+            router.push({path:'/login'})
+        }
         if (res.data.success) {
             return Promise.resolve(res.data);
         } else {

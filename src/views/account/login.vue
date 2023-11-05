@@ -13,7 +13,7 @@
                     账号<el-input class="input"  v-model="accountNumber"  size="large" placeholder="请输入账号"></el-input>
                 </div>
                 <div class="row">
-                    密码<el-input class="input mt20"  v-model="password"  size="large" placeholder="请输入密码"></el-input>
+                    密码<el-input class="input mt20"  type="password" v-model="password"  size="large" placeholder="请输入密码"></el-input>
                 </div>
                 <el-button @click="login" type="primary" size="large" class="l_btn">登录</el-button>
             </div>
@@ -26,6 +26,8 @@
 import { ref, reactive, getCurrentInstance, onMounted, onActivated, nextTick,computed,watch } from 'vue';
 import http from '@/utils/http';
 import { useRouter, useRoute } from 'vue-router';
+import {JSEncrypt} from 'jsencrypt'
+import {encryptByPublicKey} from '@/utils/utils'
 
 const router = useRouter();
 const route = useRoute();
@@ -33,9 +35,11 @@ let accountNumber=ref('admin')
 let password=ref('123')
 
 function login(){
+    let encrypt : JSEncrypt = new JSEncrypt()
     http.post('my-auth/auth/login',{
         accountNumber:accountNumber.value,
-        password:password.value
+        password:encryptByPublicKey(password.value) 
+        // password:encryptByPublicKey(password.value) 
     }).then(res=>{
         localStorage.setItem('token',res.result)
         router.push('/')

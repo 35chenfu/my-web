@@ -34,7 +34,7 @@
             </div>
             
         </div>
-        <el-dialog v-model="dialogTableVisible" width="40%" title="新增用户">
+        <el-dialog v-model="dialogTableVisible" width="40%">
             <el-form :model="form" label-width="100px">
                 <el-form-item label="账号" >
                     <el-input v-model="form.accountNumber" autocomplete="off" />
@@ -52,7 +52,8 @@
                     <el-input v-model="form.email" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="密码" >
-                    <el-input v-model="form.password" autocomplete="off" />
+                    <el-input type="password"  class="no-autofill-pwd" v-model="form.password" autocomplete="off" />
+                    <div class="tip" v-if="!form.name">不设置密码,默认密码为 88888888</div>
                 </el-form-item>
                 <el-form-item label="地址" >
                     <el-input v-model="form.address" autocomplete="off" />
@@ -89,6 +90,7 @@ import http from '@/utils/http';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router';
 import getListHook from '@/hook/getList'
+import {encryptByPublicKey} from '@/utils/utils'
 let method='post'
 let requestUrl='my-system/user/list'
 let queryData=reactive({
@@ -100,7 +102,7 @@ let queryData=reactive({
 let {tableList,getTableList,tableTotal}=getListHook(method,requestUrl,queryData)
 const router = useRouter();
 
-
+let showPwdTip=ref(false)
 let dialogTableVisible=ref(false)
 let roleDialog=ref(false)
 let form=ref({
@@ -166,7 +168,9 @@ function btnHandle(data:any,val:any){
 }
 function submit(){
     let url=form.value.id?'my-system/user/update':'my-system/user/add'
-    http.post(url,form.value).then(res=>{
+    let data=JSON.parse(JSON.stringify(form.value))
+    data.password= encryptByPublicKey(data.password) 
+    http.post(url,data).then(res=>{
         getTableList(method,requestUrl,queryData)
         dialogTableVisible.value=false
     })
@@ -197,5 +201,19 @@ function handleCurrentChange(e:any){
     .pagination_wrap{
         margin-top: 10px;
         justify-content: flex-end;
+    }
+    .no-autofill-pwd {
+        :deep(.el-input__inner) {
+            -webkit-text-security: disc !important;
+        }
+    }
+    .tip{
+        color: #666;
+        background-color: #efefef;
+        height: 30px;
+        width: 100%;
+        border-radius: 3px;
+        padding: 0 12px;
+        font-size: 12px ;
     }
 </style>
