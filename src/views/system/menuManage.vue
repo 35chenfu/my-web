@@ -68,10 +68,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="图标" >
-                    <!-- <el-input v-model="form.icon" autocomplete="off" /> -->
                     <el-dropdown trigger="click" popper-class="icon_dropdown">
                         <div class="el-dropdown-link cur_po row">
-                            
                             <el-icon :size="20" v-if="activeIcon">
                                 <component class="icons" :is="activeIcon"></component>
                             </el-icon>
@@ -166,6 +164,7 @@ let form:any=ref({
 let iconList=[
     'House','Setting','User','Box','ShoppingBag','Coin','PriceTag','Paperclip','Files','Document','Notebook','Postcard','Location'
 ]
+let activeIcon=ref('')
 let typeList=[
     {value:'1',label:'目录'},
     {value:'2',label:'菜单'},
@@ -175,7 +174,7 @@ let statusList=[
     {value:'2',label:'禁用'},
 ]
 let pidList=reactive([])
-let activeIcon=ref('')
+
 
 onMounted(()=>{
     

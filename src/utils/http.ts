@@ -61,7 +61,8 @@ http.interceptors.response.use(
         if (res.data.success) {
             return Promise.resolve(res.data);
         } else {
-            ElMessage.error(res.data.errorDesc);
+            
+            ElMessage.error(res.data.errorDesc || res.error);
             return Promise.reject(res.data);
         }
     },
@@ -70,7 +71,7 @@ http.interceptors.response.use(
             // clearStorage();
             router.push('/login');
         } else {
-            ElMessage.error(err.errorDesc);
+            ElMessage.error(err.response.data.error);
         }
 
         // 服务器响应发生错误时的处理

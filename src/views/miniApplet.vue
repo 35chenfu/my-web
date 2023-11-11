@@ -3,22 +3,23 @@
 <template>
 	<div class="user_page">
 		<div class="button">
-            <el-button @click="dialogTableVisible=true" type="primary">新增用户</el-button>
+            <el-button @click="dialogTableVisible=true" type="primary">新增分类</el-button>
         </div>
         <div class="table_wrap mt20">
             <el-table :data="tableList" border >
-                <el-table-column label="账号" prop="accountNumber" align="center"></el-table-column>
-                <el-table-column label="姓名" prop="name" align="center"></el-table-column>
-                <el-table-column label="手机" prop="phone" align="center"></el-table-column>
-                <el-table-column label="身份证" prop="idCard" align="center"></el-table-column>
-                <el-table-column label="邮箱" prop="email" align="center"></el-table-column>
-                <!-- <el-table-column label="密码" prop="password" align="center"></el-table-column> -->
-                <el-table-column label="地址" prop="address" align="center"></el-table-column>
+                <el-table-column label="名称" prop="name" align="center"></el-table-column>
+                <el-table-column label="图标" prop="icon" align="center"></el-table-column>
+                <el-table-column label="跳转Path" prop="jumpPath" align="center"></el-table-column>
+                <el-table-column label="是否开启" prop="isEnable" align="center">
+                    <template #default="scope">
+                        {{ scope.row.isEnable==1 ? '启用' : '禁用' }}
+                    </template>
+                </el-table-column>
+                <el-table-column label="排序" prop="sort" align="center"></el-table-column>
                 <el-table-column label="操作"  align="center" width="250">
                     <template #default="scope">
                         <el-button  type="primary" size="small" @click="btnHandle( scope.row, 1)">编辑</el-button>
                         <el-button  type="warning" size="small" @click="btnHandle( scope.row, 2)">删除</el-button>
-                        <el-button  type="warning" size="small" @click="btnHandle( scope.row, 3)">角色设置</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -36,46 +37,61 @@
         </div>
         <el-dialog v-model="dialogTableVisible" width="40%">
             <el-form :model="form" label-width="100px">
-                <el-form-item label="账号" >
-                    <el-input v-model="form.accountNumber" autocomplete="off" />
-                </el-form-item>
-                <el-form-item label="姓名" >
+                <el-form-item label="名称" >
                     <el-input v-model="form.name" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="手机" >
-                    <el-input v-model="form.phone" autocomplete="off" />
+                <el-form-item label="图标" >
+                    <el-dropdown trigger="click" popper-class="icon_dropdown">
+                        <div class="el-dropdown-link cur_po row">
+                            <el-icon :size="20" v-if="activeIcon">
+                                <component class="icons" :is="activeIcon"></component>
+                            </el-icon>
+                            <span v-else>请选择图标</span>
+                            <el-icon class="el-icon--right">
+                                <arrow-down />
+                            </el-icon>
+                        </div>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item>
+                                <div class="icon_wrap row">
+                                    <div class="cur_po icon" @click="selectIcon(item)" v-for="(item,index) in iconList" :key="index">
+                                        <el-icon :size="20">
+                                            <component class="icons" :is="item"></component>
+                                        </el-icon>
+                                    </div>
+                                </div>
+                            </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </el-form-item>
-                <el-form-item label="身份证" >
-                    <el-input v-model="form.idCard" autocomplete="off" />
+                <el-form-item label="跳转Path" >
+                    <el-input v-model="form.jumpPath" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="邮箱" >
-                    <el-input v-model="form.email" autocomplete="off" />
+                <el-form-item label="是否启用" >
+                    <el-select v-model="form.isEnable">
+                        <el-option
+                        v-for="item in statusList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                        placeholder="请选择状态"
+                        />
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="密码"  v-if="!form.name">
-                    <el-input type="password"  class="no-autofill-pwd" v-model="form.password" autocomplete="off" />
-                    <div class="tip" >不设置密码,默认密码为 88888888</div>
+                
+                <el-form-item label="排序" >
+                    <el-input v-model="form.sort" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="地址" >
-                    <el-input v-model="form.address" autocomplete="off" />
+                <el-form-item label="备注" >
+                    <el-input v-model="form.remarks" autocomplete="off" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogTableVisible=false">取消</el-button>
                     <el-button type="primary" @click="submit">
-                    确定
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
-        <el-dialog v-model="roleDialog" width="30%" title="设置用户角色">
-            <el-select v-model="roleVal" placeholder="请选择角色">
-                <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id" />
-            </el-select>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="roleDialog=false">取消</el-button>
-                    <el-button type="primary" @click="setRole">
                     确定
                     </el-button>
                 </span>
@@ -92,7 +108,7 @@ import { useRouter, useRoute } from 'vue-router';
 import getListHook from '@/hook/getList'
 import {encryptByPublicKey} from '@/utils/utils'
 let method='post'
-let requestUrl='my-system/user/list'
+let requestUrl='my-system/wechatMenu/list'
 let queryData=reactive({
     page:1,
     size:10,
@@ -101,6 +117,10 @@ let queryData=reactive({
 })
 let {tableList,getTableList,tableTotal}=getListHook(method,requestUrl,queryData)
 const router = useRouter();
+let iconList=[
+    'House','Setting','User','Box','ShoppingBag','Coin','PriceTag','Paperclip','Files','Document','Notebook','Postcard','Location'
+]
+let activeIcon=ref('')
 
 let showPwdTip=ref(false)
 let dialogTableVisible=ref(false)
@@ -108,29 +128,35 @@ let roleDialog=ref(false)
 let form=ref({
     id:'',
     name:'',
-    phone:'',
-    idCard:'',
-    accountNumber:'',
-    email:'',
-    password:'',
-    address:'',
+    icon:'',
+    jumpPath:'',
+    isEnable:'',
+    sort:'',
+    remarks:'',
 })
+let statusList=[
+    {value:'1',label:'启用'},
+    {value:'2',label:'禁用'},
+]
 let updateForm:any=ref({})
 onMounted(async ()=>{
     getRoleList()
 })
+function selectIcon(data:any){
+    activeIcon.value=data
+    form.value.icon=data
+}
 
 watch(dialogTableVisible,(val)=>{
     if(!val){
         form.value={
             id:'',
             name:'',
-            phone:'',
-            idCard:'',
-            accountNumber:'',
-            email:'',
-            password:'',
-            address:'',
+            icon:'',
+            jumpPath:'',
+            isEnable:'',
+            remarks:'',
+            sort:'',
         }
     }
 })
@@ -151,39 +177,27 @@ function btnHandle(data:any,val:any){
         form.value=JSON.parse(JSON.stringify(data))
         dialogTableVisible.value=true
     }else if(val==2){
-        ElMessageBox.confirm('确认删除此用户吗？','提示',{
+        ElMessageBox.confirm('确认删除此分类吗？','提示',{
             confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning',
         }).then(()=>{
-            http.get('my-system/user/del/'+data.id).then(res=>{
+            http.get('my-system/wechatMenu/del/'+data.id).then(res=>{
                 ElMessage.success('删除成功')
                 getTableList(method,requestUrl,queryData)
             })
         })
-    }else{
-        selectUserId.value=data.id
-        roleDialog.value=true
     }
 }
 function submit(){
-    let url=form.value.id?'my-system/user/update':'my-system/user/add'
+    let url=form.value.id?'my-system/wechatMenu/edit':'my-system/wechatMenu/add'
     let data=JSON.parse(JSON.stringify(form.value))
-    data.password=data.password? encryptByPublicKey(data.password) :''
     http.post(url,data).then(res=>{
         getTableList(method,requestUrl,queryData)
         dialogTableVisible.value=false
     })
 }
-function setRole(){
-    http.post('my-system/role/empowerUserRole',{
-        userId:selectUserId.value,
-        roleId:roleVal.value,
-    }).then(res=>{
-        
-        roleDialog.value=false
-    })
-}
+
 function handleSizeChange(e:any){
     queryData.size=e
     getTableList(method,requestUrl,queryData)

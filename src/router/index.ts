@@ -23,6 +23,12 @@ const router = createRouter({
             meta: { title: '角色管理', isLogin: true, showHead: true,showMenu:true},
             component: () => import('../views/role.vue'),
         },
+        {
+            path: '/miniApplet',
+            name: 'miniApplet',
+            meta: { title: '小程序分类管理', isLogin: true, showHead: true,showMenu:true},
+            component: () => import('../views/miniApplet.vue'),
+        },
         ...systemRoutes,
         ...accountRoutes,
         ...productRoutes
