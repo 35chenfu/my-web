@@ -1,6 +1,6 @@
 import { ElMessage } from 'element-plus';
 import {JSEncrypt} from 'jsencrypt'
-
+import http from '@/utils/http';
 let timeout: any = null;
 
 export const debounce = (func: any, wait = 500, ams = [], immediate = false) => {
@@ -104,3 +104,4 @@ export const encryptByPublicKey=(password:any)=>{
     encrypt.setPublicKey(publicKey)
     return <string>encrypt.encrypt(password)
 }
+
