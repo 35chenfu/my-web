@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router
 import systemRoutes from './modules/system';
 import accountRoutes from './modules/account';
 import productRoutes from './modules/product';
+import merchantRoutes from './modules/merchant';
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -31,8 +32,8 @@ const router = createRouter({
         },
         ...systemRoutes,
         ...accountRoutes,
-        ...productRoutes
-        
+        ...productRoutes,
+        ...merchantRoutes
     ],
 });
 

@@ -1,10 +1,10 @@
 
 const productRoutes = [
     {
-        path: '/product/detail',
-        name: 'productDetail',
+        path: '/product',
+        name: 'product',
         meta: {title:'商品详情', isLogin: true, showHead: true,showMenu:true },
-        component: () => import('@/views/product/detail.vue'),
+        component: () => import('@/views/product/index.vue'),
     },
    
    
