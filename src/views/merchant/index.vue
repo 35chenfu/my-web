@@ -109,7 +109,7 @@ let rules=reactive({
         {required:true,message:'请输入名称',trigger:'blur'}
     ],
     merchantIconId:[
-        { validator: phoneRule, trigger: 'blur' }
+        {required:true, validator: phoneRule, trigger: 'blur' }
     ]
 })
 

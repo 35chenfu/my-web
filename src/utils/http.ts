@@ -52,7 +52,6 @@ http.interceptors.response.use(
             return Promise.resolve(res.data);
         } else {
             ElMessage.error(res.data.errorDesc || res.error);
-            router.push('/login');
             return Promise.reject(res.data);
         }
     },
@@ -63,7 +62,6 @@ http.interceptors.response.use(
             router.push('/login');
         } else {
             ElMessage.error(err.response.data.error);
-            router.push('/login');
         }
 
         // 服务器响应发生错误时的处理

@@ -1,7 +1,7 @@
 <template>
     <div class="user_page">
         <div class="button">
-            <el-button @click="dialogTableVisible = true" type="primary">新增商品</el-button>
+            <el-button @click="add" type="primary">新增商品</el-button>
         </div>
         <div class="table_wrap mt20">
             <el-table :data="tableList" border>
@@ -31,49 +31,9 @@
                 <el-pagination :page-sizes="[10, 50, 100]" layout="total, sizes, prev, pager, next, jumper"
                     :total="tableTotal" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
             </div>
-
         </div>
-        <el-dialog v-model="dialogTableVisible" width="40%">
-            <el-form :model="form" label-width="100px">
-                <el-form-item label="名称">
-                    <el-input v-model="form.name" autocomplete="off" />
-                </el-form-item>
-                <el-form-item label="图标">
-                    <el-upload class="avatar-uploader" :action="baseConfing.baseUrl + 'my-file/file/upload'"
-                        :show-file-list="false" :on-success="handleAvatarSuccess">
-                        <img v-if="iconUrl" :src="iconUrl" class="avatar" />
-                        <el-icon v-else class="avatar-uploader-icon">
-                            <Plus />
-                        </el-icon>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="简介">
-                    <el-input v-model="form.briefIntroduction" autocomplete="off" />
-                </el-form-item>
-                <el-form-item label="电话">
-                    <el-input v-model="form.contactTel" autocomplete="off" />
-                </el-form-item>
-                <el-form-item label="类型">
-                    <el-input v-model="form.type" autocomplete="off" />
-                </el-form-item>
-
-                <el-form-item label="排序">
-                    <el-input v-model="form.sort" autocomplete="off" />
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="form.remarks" autocomplete="off" />
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="dialogTableVisible = false">取消</el-button>
-                    <el-button type="primary" @click="submit">
-                        确定
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
-
+        
+        <proDetail ref="proDetailRef" @submitCb="submitCb"></proDetail>
     </div>
 </template>
 <script setup lang="ts">
@@ -83,8 +43,13 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router';
 import getListHook from '@/hook/getList'
 import baseConfing from '@/config'
+import proDetail from './components/detail.vue'
+
+
+let proDetailRef:any=ref({})
+
 let method = 'post'
-let requestUrl = 'my-merchant/merchant/list'
+let requestUrl = 'my-merchandise/commodity/list'
 let queryData = reactive({
     page: 1,
     size: 10,
@@ -96,74 +61,37 @@ let queryData = reactive({
 let { tableList, getTableList, tableTotal } = getListHook(method, requestUrl, queryData)
 const router = useRouter();
 
-let dialogTableVisible = ref(false)
-let iconUrl = ref('')
-let form = ref({
-    id: '',
-    name: '',
-    briefIntroduction: '',
-    type: '',
-    merchantIconId:"",
-    contactTel: '',
-    sort: '',
-    remarks: '',
-})
-let statusList = [
-    { value: '1', label: '启用' },
-    { value: '2', label: '禁用' },
-]
+
 onMounted(async () => {
+
 })
 
-const handleAvatarSuccess = (
-  response,
-  uploadFile
-) => {
-    form.value.merchantIconId=response.result.id
-    iconUrl.value = URL.createObjectURL(uploadFile.raw)
+
+
+
+function add(){
+    proDetailRef.value.dialogTableVisible=true
 }
-
-watch(dialogTableVisible, (val) => {
-    if (!val) {
-        form.value = {
-            id: '',
-            name: '',
-            merchantIconId: '',
-            remarks: '',
-            sort: '',
-            contactTel:'',
-            briefIntroduction:'',
-            type:'',
-        }
-    }
-})
-
+function submitCb(){
+    getTableList(method, requestUrl, queryData)
+}
 function btnHandle(data: any, val: any) {
     if (val == 1) {
-        form.value = JSON.parse(JSON.stringify(data))
-        iconUrl.value= baseConfing.baseUrl+ 'my-file/file/preview/'+form.value.merchantIconId 
-        dialogTableVisible.value = true
+        
     } else if (val == 2) {
         ElMessageBox.confirm('确认删除此商户吗？', '提示', {
             confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning',
         }).then(() => {
-            http.get('my-merchant/merchant/del/' + data.id).then(res => {
+            http.get('my-merchandise/commodity/del/' + data.id).then(res => {
                 ElMessage.success('删除成功')
                 getTableList(method, requestUrl, queryData)
             })
         })
     }
 }
-function submit() {
-    let url = form.value.id ? 'my-merchant/merchant/edit' : 'my-merchant/merchant/add'
-    let data = JSON.parse(JSON.stringify(form.value))
-    http.post(url, data).then(res => {
-        getTableList(method, requestUrl, queryData)
-        dialogTableVisible.value = false
-    })
-}
+
 
 function handleSizeChange(e: any) {
     queryData.size = e
@@ -200,32 +128,5 @@ function handleCurrentChange(e: any) {
     padding: 0 12px;
     font-size: 12px;
 }
-.avatar-uploader{
-    .avatar{
-        width: 178px;
-        height: 178px;
-        display: block;
-    }
-    :deep(.el-upload){
-        border: 1px dashed var(--el-border-color);
-        border-radius: 6px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        &:hover{
-            border-color: var(--el-color-primary);
-        }
-    }
- 
-}
 
-
-
-.el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  text-align: center;
-}
 </style>

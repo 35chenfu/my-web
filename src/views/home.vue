@@ -3,7 +3,7 @@
 <template>
 	<div class="page">
 		首页
-		<comEditor></comEditor>
+		
 	</div>
 </template>
 <script setup lang="ts">
