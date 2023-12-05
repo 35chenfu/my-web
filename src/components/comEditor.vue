@@ -45,8 +45,8 @@ export default {
             customInsert(res: any, insertFn: any) {  // TS 语法
                 console.log(1231321,res)
 
-                let imgUrl='http://125.124.0.124:8000/my-file/file/preview/5fb8f29796404931bf1f2f88774fdab6'
-                // let imgUrl=baseConfing.baseUrl+'my-file/file/preview'+res.result.fileNameSave
+                // let imgUrl='http://125.124.0.124:8000/my-file/file/preview/5fb8f29796404931bf1f2f88774fdab6'
+                let imgUrl=baseConfing.baseUrl+'my-file/file/preview/'+res.result.id
                 let text=`<img src=${imgUrl}>`
                 editorRef.value.dangerouslyInsertHtml(text)
             },
