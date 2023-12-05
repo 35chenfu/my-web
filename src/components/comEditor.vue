@@ -40,13 +40,19 @@ export default {
         };
         editorConfig.MENU_CONF['uploadImage'] = {
             server: baseConfing.baseUrl+'my-file/file/upload',
+            fieldName: 'file',
             // 自定义插入图片
             customInsert(res: any, insertFn: any) {  // TS 语法
                 console.log(1231321,res)
+
+                let imgUrl='http://125.124.0.124:8000/my-file/file/preview/5fb8f29796404931bf1f2f88774fdab6'
+                // let imgUrl=baseConfing.baseUrl+'my-file/file/preview'+res.result.fileNameSave
+                let text=`<img src=${imgUrl}>`
+                editorRef.value.dangerouslyInsertHtml(text)
             },
         }
         function insertFn(url, alt, href){
-            
+
         }
         
         // 组件销毁时，也及时销毁编辑器，重要！
@@ -88,10 +94,10 @@ export default {
             callback(false); // 返回 false ，阻止默认粘贴行为
             // callback(true) // 返回 true ，继续默认的粘贴行为
         };
-        const insertText = () => {
+        const insertText = (val:any='') => {
             const editor = editorRef.value;
             if (editor == null) return;
-            editor.insertText("hello world");
+            editor.insertText(val);
         };
 
         const printHtml = () => {
