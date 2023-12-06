@@ -9,9 +9,9 @@
             <el-table :data="tableList" border>
                 <el-table-column label="商户编号" prop="merchantNo" align="center"></el-table-column>
                 <el-table-column label="名称" prop="name" align="center"></el-table-column>
-                <el-table-column label="商户图标" prop="icon" align="center">
+                <el-table-column label="商户图标" prop="merchantIconId" align="center">
                     <template #default="scope">
-                       <img style="width: 50px;height: 50px;" :src="baseConfing.baseUrl+'my-file/file/preview/'+scope.row.icon" alt="" srcset="">
+                       <img style="width: 50px;height: 50px;" :src="baseConfing.baseUrl+'my-file/file/preview/'+scope.row.merchantIconId" alt="" srcset="">
                     </template>
                 </el-table-column>
                 

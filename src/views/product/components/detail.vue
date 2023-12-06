@@ -4,7 +4,7 @@
             <el-form-item label="商品标题" prop="title">
                 <el-input v-model="form.title" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="商品编号" prop="serialNumber">
+            <el-form-item label="商品编号" prop="serialNumber" v-if="form.serialNumber">
                 <el-input v-model="form.serialNumber" />
             </el-form-item>
 
@@ -23,7 +23,7 @@
                     value-format="YYYY-MM-DD h:m:s" placeholder="请选择日期" />
             </el-form-item>
             <el-form-item label="限时抢购价格" prop="rushPurchasePrice">
-                <el-input v-model="form.rushPurchasePrice" />
+                <el-input-number min="0"  v-model="form.rushPurchasePrice" />
             </el-form-item>
             <el-form-item label="商户选择" prop="merchantId">
                 <el-select v-model="form.merchantId" @change="changeMerchant">
@@ -36,13 +36,10 @@
             </el-form-item>
 
             <el-form-item label="小程序分类" prop="wxMenuId">
-
                 <el-select v-model="form.wxMenuId">
                     <el-option v-for="item in miniAppletList" :key="item.id" :label="item.name" :value="item.id"
                         placeholder="请选择状态" />
                 </el-select>
-
-
             </el-form-item>
             <el-form-item label="类别选择" prop="categoryId">
                 <el-input v-model="form.categoryId" />
@@ -56,7 +53,7 @@
             </el-form-item>
 
             <el-form-item label="排序">
-                <el-input v-model="form.sort" autocomplete="off" />
+                <el-input-number min="0" v-model="form.sort" autocomplete="off" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="form.remarks" autocomplete="off" />
@@ -70,6 +67,23 @@
                     </el-icon>
                 </el-upload>
             </el-form-item>
+            <el-form-item label="商品套餐">
+                <el-table :data="form.commodityComboList" border v-if="form.commodityComboList.length>0" style="margin-bottom: 20px;">
+                    <el-table-column label="名称" prop="comboName" align="center"></el-table-column>
+                    <el-table-column label="价格" prop="price" align="center"></el-table-column>
+                    <el-table-column label="库存" prop="inventory" align="center"></el-table-column>
+                    <el-table-column label="限制数量" prop="limitNum" align="center"></el-table-column>
+                    <el-table-column label="排序" prop="sort" align="center"></el-table-column>
+                    <el-table-column label="备注" prop="remarks" align="center"></el-table-column>
+                    <el-table-column label="操作" prop="" align="center"  >
+                        <template #default="scope">
+                            <el-button type="warning" size="small" @click="comboHandle(scope)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                <el-button type="primary"  @click="comboVisible=true">点击添加</el-button>
+            </el-form-item>
             <el-form-item label="商品详情" prop="details">
                 <comEditor @send-detail="sendDetail" ref="comEditorRef"></comEditor>
             </el-form-item>
@@ -81,6 +95,38 @@
             <span class="dialog-footer">
                 <el-button @click="dialogTableVisible = false">取消</el-button>
                 <el-button type="primary" @click="submit">
+                    确定
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
+
+ 
+    <el-dialog v-model="comboVisible" width="35%">
+        <el-form :model="comboForm" label-width="100px">
+            <el-form-item label="套餐名称" prop="comboName">
+                <el-input v-model="comboForm.comboName" ></el-input>
+            </el-form-item>
+            <el-form-item label="套餐价格" prop="price">
+                <el-input-number min="0"  v-model="comboForm.price" />
+            </el-form-item>
+            <el-form-item label="套餐库存" prop="inventory">
+                <el-input-number min="0"  v-model="comboForm.inventory" />
+            </el-form-item>
+            <el-form-item label="限制购买数量" prop="limitNum">
+                <el-input-number min="0" v-model="comboForm.limitNum" />
+            </el-form-item>
+            <el-form-item label="排序" prop="sort">
+                <el-input-number min="0" v-model="comboForm.sort" />
+            </el-form-item>
+            <el-form-item label="备注" prop="remarks">
+                <el-input v-model="comboForm.remarks" ></el-input>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="comboVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveCombo">
                     确定
                 </el-button>
             </span>
@@ -99,6 +145,7 @@ const props = defineProps({
 })
 const emits = defineEmits(['submitCb'])
 let dialogTableVisible = ref(false)
+
 let comEditorRef: any = ref(null)
 let comEditorRef2: any = ref(null)
 
@@ -130,21 +177,39 @@ let form: any = reactive({
     "remarks": "", //备注
     "commodityFileId": [], //商品图片集合
     "commodityComboList": [           //商品套餐
-        {
-            "comboName": "131312", //套餐名称
-            "price": 1, //价格
-            "inventory": 1, //库存
-            "limitNum": 1, //限制购买数量
-            "sort": 1, //排序
-            "remarks": "" //备注
-        }
+        
     ]
 })
+let comboVisible=ref(false)
 
+let comboForm:any=reactive({
+    comboName:'',
+    price:'',
+    inventory:'',
+    limitNum:'',
+    sort:'',
+    remarks:''
+})
 onMounted(() => {
     getMiniApplet()
     getMErchantList()
 })
+
+function saveCombo(){
+    form.commodityComboList.push(comboForm)
+    comboVisible.value=false
+    comboForm={
+        comboName:'',
+        price:'',
+        inventory:'',
+        limitNum:'',
+        sort:'',
+        remarks:''
+    }
+}
+function comboHandle(data:any){
+    form.commodityComboList.splice(data.$index,1)
+}
 let miniAppletList = reactive([])
 function getMiniApplet() {
     http.post('my-system/wechatMenu/list', {
@@ -167,9 +232,13 @@ function changeMerchant(e: any) {
     form.merchantTel = merchantList.find((el: any) => {
         return el.id == e
     }).contactTel
-    console.log(1212121, form.merchantTel)
+   
 }
-
+function getDetail(id:any){
+    http.get('my-merchandise/commodity/info/'+id).then((res:any)=>{
+        
+    })
+}
 
 
 const handleAvatarSuccess = (
@@ -209,14 +278,7 @@ function submit() {
             "remarks": "", //备注
             "commodityFileId": [], //商品图片集合
             "commodityComboList": [           //商品套餐
-                {
-                    "comboName": "131312", //套餐名称
-                    "price": 1, //价格
-                    "inventory": 1, //库存
-                    "limitNum": 1, //限制购买数量
-                    "sort": 1, //排序
-                    "remarks": "" //备注
-                }
+                
             ]
         }
         dialogTableVisible.value=false
@@ -228,7 +290,7 @@ function submit() {
 
 
 
-defineExpose({ dialogTableVisible })
+defineExpose({ dialogTableVisible,getDetail,form })
 </script>
 <style lang="scss" scoped>
 .avatar-uploader {

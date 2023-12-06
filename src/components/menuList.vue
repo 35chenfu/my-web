@@ -14,7 +14,7 @@
 					<el-sub-menu :index="item.path">
 						<template #title>
 							<el-icon>
-								<component   :is="item.icon" ></component>
+								<component  :is="item.icon" ></component>
 							</el-icon>
 							<span>{{ item.menuName }}</span>
 						</template>

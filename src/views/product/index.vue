@@ -5,22 +5,27 @@
         </div>
         <div class="table_wrap mt20">
             <el-table :data="tableList" border>
-                <el-table-column label="商户编号" prop="merchantNo" align="center"></el-table-column>
-                <el-table-column label="名称" prop="name" align="center"></el-table-column>
-                <el-table-column label="商户图标" prop="icon" align="center">
+                <el-table-column label="名称" prop="title" align="center"></el-table-column>
+                <el-table-column label="编号" prop="serialNumber" align="center"></el-table-column>
+                <el-table-column label="说明" prop="description" align="center"></el-table-column>
+                <el-table-column label="是否在售" prop="isSale" align="center">
                     <template #default="scope">
-                       <img style="width: 50px;height: 50px;" :src="baseConfing.baseUrl+'my-file/file/preview/'+scope.row.icon" alt="" srcset="">
+                        <span>{{ scope.row.isSale==1?'是':'否' }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="是否限时抢购" prop="flashSale" align="center">
+                    <template #default="scope">
+                        <span>{{ scope.row.flashSale==1?'是':'否' }}</span>
                     </template>
                 </el-table-column>
                 
-                <el-table-column label="联系号码" prop="contactTel" align="center"></el-table-column>
                 <el-table-column label="类型" prop="type" align="center"></el-table-column>
-                <el-table-column label="简介" prop="briefIntroduction" align="center"></el-table-column>
 
                 <el-table-column label="排序" prop="sort" align="center"></el-table-column>
-                <el-table-column label="备注" prop="remark" align="center"></el-table-column>
+                <el-table-column label="备注" prop="remarks" align="center"></el-table-column>
                 <el-table-column label="操作" align="center" width="250">
                     <template #default="scope">
+                        <el-button type="primary" size="small" @click="btnHandle(scope.row, 3)">详情</el-button>
                         <el-button type="primary" size="small" @click="btnHandle(scope.row, 1)">编辑</el-button>
                         <el-button type="warning" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
                     </template>
@@ -66,9 +71,6 @@ onMounted(async () => {
 
 })
 
-
-
-
 function add(){
     proDetailRef.value.dialogTableVisible=true
 }
@@ -76,15 +78,16 @@ function submitCb(){
     getTableList(method, requestUrl, queryData)
 }
 function btnHandle(data: any, val: any) {
-    if (val == 1) {
-        
+    if (val == 1 || val==3) {
+        proDetailRef.value.getDetail(data.id)
+        proDetailRef.value.dialogTableVisible=true
     } else if (val == 2) {
         ElMessageBox.confirm('确认删除此商户吗？', '提示', {
             confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning',
         }).then(() => {
-            http.get('my-merchandise/commodity/del/' + data.id).then(res => {
+            http.get('my-merchandise/commodity/delete/' + data.id).then(res => {
                 ElMessage.success('删除成功')
                 getTableList(method, requestUrl, queryData)
             })
