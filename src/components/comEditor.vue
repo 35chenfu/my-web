@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import "@wangeditor/editor/dist/css/style.css";
-import { onBeforeUnmount, ref, shallowRef, onMounted,nextTick } from "vue";
+import { onBeforeUnmount, ref, shallowRef, onMounted, nextTick, watch } from 'vue';
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { DomEditor } from '@wangeditor/editor'
 import baseConfing from '@/config'
@@ -22,14 +22,22 @@ import baseConfing from '@/config'
 // 编辑器实例，必须用 shallowRef，重要！
 const editorRef = shallowRef();
 // 内容 HTML
-const valueHtml = ref("<p></p>");
+
 const emits = defineEmits(['sendDetail']);
 // 模拟 ajax 异步获取内容
 onMounted(() => {
     
-    
-
 });
+const props = defineProps({
+    htmlVal:String
+})
+watch(()=>{props.htmlVal},(val:any)=>{
+    valueHtml.value=val
+})
+
+let valueHtml = ref("<p></p>");
+
+
 
 let mode= ref('default')
 const toolbarConfig:any = {};

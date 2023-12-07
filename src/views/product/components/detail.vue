@@ -23,7 +23,7 @@
                     value-format="YYYY-MM-DD h:m:s" placeholder="请选择日期" />
             </el-form-item>
             <el-form-item label="限时抢购价格" prop="rushPurchasePrice">
-                <el-input-number min="0"  v-model="form.rushPurchasePrice" />
+                <el-input-number :min="0"  v-model="form.rushPurchasePrice" />
             </el-form-item>
             <el-form-item label="商户选择" prop="merchantId">
                 <el-select v-model="form.merchantId" @change="changeMerchant">
@@ -53,7 +53,7 @@
             </el-form-item>
 
             <el-form-item label="排序">
-                <el-input-number min="0" v-model="form.sort" autocomplete="off" />
+                <el-input-number :min="0" v-model="form.sort" autocomplete="off" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="form.remarks" autocomplete="off" />
@@ -85,10 +85,10 @@
                 <el-button type="primary"  @click="comboVisible=true">点击添加</el-button>
             </el-form-item>
             <el-form-item label="商品详情" prop="details">
-                <comEditor @send-detail="sendDetail" ref="comEditorRef"></comEditor>
+                <comEditor @send-detail="sendDetail" ref="comEditorRef" :htmlVal="form.details"></comEditor>
             </el-form-item>
             <el-form-item label="预定须知" prop="bookingInstructions">
-                <comEditor @send-detail="sendPreDetail" ref="comEditorRef2"></comEditor>
+                <comEditor @send-detail="sendPreDetail" ref="comEditorRef2" ></comEditor>
             </el-form-item>
         </el-form>
         <template #footer>
@@ -108,16 +108,16 @@
                 <el-input v-model="comboForm.comboName" ></el-input>
             </el-form-item>
             <el-form-item label="套餐价格" prop="price">
-                <el-input-number min="0"  v-model="comboForm.price" />
+                <el-input-number :min="0"  v-model="comboForm.price" />
             </el-form-item>
             <el-form-item label="套餐库存" prop="inventory">
-                <el-input-number min="0"  v-model="comboForm.inventory" />
+                <el-input-number :min="0"  v-model="comboForm.inventory" />
             </el-form-item>
             <el-form-item label="限制购买数量" prop="limitNum">
-                <el-input-number min="0" v-model="comboForm.limitNum" />
+                <el-input-number :min="0" v-model="comboForm.limitNum" />
             </el-form-item>
             <el-form-item label="排序" prop="sort">
-                <el-input-number min="0" v-model="comboForm.sort" />
+                <el-input-number :min="0" v-model="comboForm.sort" />
             </el-form-item>
             <el-form-item label="备注" prop="remarks">
                 <el-input v-model="comboForm.remarks" ></el-input>
@@ -146,8 +146,8 @@ const props = defineProps({
 const emits = defineEmits(['submitCb'])
 let dialogTableVisible = ref(false)
 
-let comEditorRef: any = ref(null)
-let comEditorRef2: any = ref(null)
+let comEditorRef:any = ref(null)
+let comEditorRef2:any = ref(null)
 
 let saleList = [
     { value: '1', label: '是' },
@@ -236,6 +236,13 @@ function changeMerchant(e: any) {
 }
 function getDetail(id:any){
     http.get('my-merchandise/commodity/info/'+id).then((res:any)=>{
+
+        form={...res.result}
+        dialogTableVisible.value=true
+        nextTick(()=>{
+            comEditorRef.value.valueHtml=res.result.details
+            comEditorRef2.value.valueHtml=res.result.bookingInstructions
+        })
         
     })
 }

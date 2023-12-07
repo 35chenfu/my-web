@@ -37,7 +37,6 @@
                     :total="tableTotal" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
             </div>
         </div>
-        
         <proDetail ref="proDetailRef" @submitCb="submitCb"></proDetail>
     </div>
 </template>
@@ -80,7 +79,6 @@ function submitCb(){
 function btnHandle(data: any, val: any) {
     if (val == 1 || val==3) {
         proDetailRef.value.getDetail(data.id)
-        proDetailRef.value.dialogTableVisible=true
     } else if (val == 2) {
         ElMessageBox.confirm('确认删除此商户吗？', '提示', {
             confirmButtonText: '确认',
