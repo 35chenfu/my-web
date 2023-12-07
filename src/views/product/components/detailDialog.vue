@@ -18,11 +18,11 @@
                 </el-select>
             </el-form-item>
 
-            <el-form-item label="抢购截止日期" prop="cutoffDate">
+            <el-form-item label="抢购截止日期" prop="cutoffDate" v-if="form.flashSale==1">
                 <el-date-picker v-model="form.cutoffDate" type="datetime" format="YYYY/MM/DD HH:mm:ss"
                     value-format="YYYY-MM-DD h:m:s" placeholder="请选择日期" />
             </el-form-item>
-            <el-form-item label="限时抢购价格" prop="rushPurchasePrice">
+            <el-form-item label="限时抢购价格" prop="rushPurchasePrice" v-if="form.flashSale==1">
                 <el-input-number :min="0"  v-model="form.rushPurchasePrice" />
             </el-form-item>
             <el-form-item label="商户选择" prop="merchantId">
@@ -165,7 +165,7 @@ let form: any = reactive({
     "description": '',  //说明
     "flashSale": '2',  //限时抢购 1-是 2-否
     "cutoffDate": "", //限时抢购截止日期
-    "rushPurchasePrice": '', //限时抢购价格
+    "rushPurchasePrice": 0, //限时抢购价格
     "merchantId": "", //商家 ID
     "merchantTel": "", //商家联系方式
     "details": "", //详情
@@ -176,9 +176,9 @@ let form: any = reactive({
     "sort": '', //排序
     "remarks": "", //备注
     "commodityFileId": [], //商品图片集合
-    "commodityComboList": [           //商品套餐
+    "commodityComboList": []          //商品套餐
         
-    ]
+    
 })
 let comboVisible=ref(false)
 
@@ -236,8 +236,27 @@ function changeMerchant(e: any) {
 }
 function getDetail(id:any){
     http.get('my-merchandise/commodity/info/'+id).then((res:any)=>{
-
-        form={...res.result}
+        let data=res.result
+        form.title=data.title
+        form.id=data.id
+        form.serialNumber=data.serialNumber
+        form.description=data.description
+        form.flashSale=data.flashSale
+        form.cutoffDate=data.cutoffDate
+        form.rushPurchasePrice=data.rushPurchasePrice
+        form.merchantId=data.merchantId
+        form.merchantTel=data.merchantTel
+        form.details=data.details
+        form.bookingInstructions=data.bookingInstructions
+        form.wxMenuId=data.wxMenuId
+        form.categoryId=data.categoryId
+        form.isSale=data.isSale
+        form.sort=data.sort
+        form.remarks=data.remarks
+        form.remarks=data.remarks
+        form.commodityFileId=data.commodityFileId
+        form.commodityComboList=data.commodityComboList
+        
         dialogTableVisible.value=true
         nextTick(()=>{
             comEditorRef.value.valueHtml=res.result.details
@@ -273,7 +292,7 @@ function submit() {
             "description": '',  //说明
             "flashSale": '2',  //限时抢购 1-是 2-否
             "cutoffDate": "", //限时抢购截止日期
-            "rushPurchasePrice": '', //限时抢购价格
+            "rushPurchasePrice": 0, //限时抢购价格
             "merchantId": "", //商家 ID
             "merchantTel": "", //商家联系方式
             "details": "", //详情

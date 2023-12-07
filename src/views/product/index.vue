@@ -47,7 +47,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router';
 import getListHook from '@/hook/getList'
 import baseConfing from '@/config'
-import proDetail from './components/detail.vue'
+import proDetail from './components/detailDialog.vue'
 
 
 let proDetailRef:any=ref({})
@@ -77,7 +77,7 @@ function submitCb(){
     getTableList(method, requestUrl, queryData)
 }
 function btnHandle(data: any, val: any) {
-    if (val == 1 || val==3) {
+    if (val == 1) {
         proDetailRef.value.getDetail(data.id)
     } else if (val == 2) {
         ElMessageBox.confirm('确认删除此商户吗？', '提示', {
@@ -89,6 +89,13 @@ function btnHandle(data: any, val: any) {
                 ElMessage.success('删除成功')
                 getTableList(method, requestUrl, queryData)
             })
+        })
+    }else if(val==3){
+        router.push({
+            path:'/productDetail',
+            query:{
+                id:data.id
+            }
         })
     }
 }
