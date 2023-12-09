@@ -5,7 +5,7 @@
                 <el-input v-model="form.title" autocomplete="off" />
             </el-form-item>
             <el-form-item label="商品编号" prop="serialNumber" v-if="form.serialNumber">
-                <el-input v-model="form.serialNumber" />
+                <span>{{ form.serialNumber }}</span>
             </el-form-item>
 
             <el-form-item label="商品说明" prop="description">
@@ -61,6 +61,7 @@
             <el-form-item label="商品图片" prop="commodityFileId">
                 <el-upload class="avatar-uploader" :action="baseConfing.baseUrl + 'my-file/file/upload'"
                     :show-file-list="true" list-type="picture-card" :on-success="handleAvatarSuccess"
+                    :on-remove="removeImage"
                     v-model:file-list="fileList" accept=".png,.jpg,.jepg,.PNG,.JPG,.JEPG" multiple>
                     <el-icon class="avatar-uploader-icon">
                         <Plus />
@@ -194,7 +195,11 @@ onMounted(() => {
     getMiniApplet()
     getMErchantList()
 })
-
+watch(dialogTableVisible,(val)=>{
+    if(!val){
+        resetData()
+    }
+})
 function saveCombo(){
     form.commodityComboList.push(comboForm)
     comboVisible.value=false
@@ -254,10 +259,18 @@ function getDetail(id:any){
         form.sort=data.sort
         form.remarks=data.remarks
         form.remarks=data.remarks
-        form.commodityFileId=data.commodityFileId
+        form.commodityFileId=data.commodityDetails.map((el)=>{
+            return el.fileId
+        })
         form.commodityComboList=data.commodityComboList
         
         dialogTableVisible.value=true
+        data.commodityDetails.forEach(el => {
+            fileList.push({
+                uid:new Date().getTime(),
+                url:baseConfing.baseUrl+'my-file/file/preview/'+el.fileId
+            })
+        });
         nextTick(()=>{
             comEditorRef.value.valueHtml=res.result.details
             comEditorRef2.value.valueHtml=res.result.bookingInstructions
@@ -273,6 +286,13 @@ const handleAvatarSuccess = (
 ) => {
     // form.value.merchantIconId=response.result.id
     form.commodityFileId.push(response.result.id)
+    
+}
+function removeImage(e:any,es:any){
+    let index=form.commodityFileId.findIndex((item)=>{
+        return e.url.indexOf(item)!=-1
+    })
+    form.commodityFileId.splice(index,1)
 }
 function sendDetail(data: any) {
     form.details = data
@@ -284,34 +304,37 @@ function submit() {
     let url = form.id ? 'my-merchandise/commodity/edit' : 'my-merchandise/commodity/add'
     let data = JSON.parse(JSON.stringify(form))
     http.post(url, data).then(res => {
-        // getTableList(method, requestUrl, queryData)
-        form = {
-            "id": '',
-            "title": '',  //标题
-            "serialNumber": '',  //商品编号
-            "description": '',  //说明
-            "flashSale": '2',  //限时抢购 1-是 2-否
-            "cutoffDate": "", //限时抢购截止日期
-            "rushPurchasePrice": 0, //限时抢购价格
-            "merchantId": "", //商家 ID
-            "merchantTel": "", //商家联系方式
-            "details": "", //详情
-            "bookingInstructions": "", //预定须知
-            "wxMenuId": "", //小程序菜单ID
-            "categoryId": "", //类别ID
-            "isSale": "1", //是否在售 1-是 2-否
-            "sort": '', //排序
-            "remarks": "", //备注
-            "commodityFileId": [], //商品图片集合
-            "commodityComboList": [           //商品套餐
-                
-            ]
-        }
+        ElMessage.success(form.id?'编辑成功':'添加成功')
+        resetData()
         dialogTableVisible.value=false
         emits('submitCb')
     })
 }
-
+function resetData(){
+    form = {
+        "id": '',
+        "title": '',  //标题
+        "serialNumber": '',  //商品编号
+        "description": '',  //说明
+        "flashSale": '2',  //限时抢购 1-是 2-否
+        "cutoffDate": "", //限时抢购截止日期
+        "rushPurchasePrice": 0, //限时抢购价格
+        "merchantId": "", //商家 ID
+        "merchantTel": "", //商家联系方式
+        "details": "", //详情
+        "bookingInstructions": "", //预定须知
+        "wxMenuId": "", //小程序菜单ID
+        "categoryId": "", //类别ID
+        "isSale": "1", //是否在售 1-是 2-否
+        "sort": '', //排序
+        "remarks": "", //备注
+        "commodityFileId": [], //商品图片集合
+        "commodityComboList": [  ]
+    }
+    comEditorRef.value.valueHtml=''
+    comEditorRef2.value.valueHtml=''
+    fileList.length=0
+}
 
 
 
