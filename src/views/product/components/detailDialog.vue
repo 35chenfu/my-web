@@ -103,7 +103,7 @@
     </el-dialog>
 
  
-    <el-dialog v-model="comboVisible" width="35%">
+    <el-dialog v-model="comboVisible" width="35%" :destroy-on-close="true">
         <el-form :model="comboForm" label-width="100px">
             <el-form-item label="套餐名称" prop="comboName">
                 <el-input v-model="comboForm.comboName" ></el-input>
@@ -201,16 +201,15 @@ watch(dialogTableVisible,(val)=>{
     }
 })
 function saveCombo(){
-    form.commodityComboList.push(comboForm)
+    form.commodityComboList.push({...comboForm})
     comboVisible.value=false
-    comboForm={
-        comboName:'',
-        price:'',
-        inventory:'',
-        limitNum:'',
-        sort:'',
-        remarks:''
-    }
+    comboForm.comboName=''
+        comboForm.price=''
+        comboForm.inventory=''
+        comboForm.limitNum=''
+        comboForm.sort=''
+        comboForm.remarks=''
+    
 }
 function comboHandle(data:any){
     form.commodityComboList.splice(data.$index,1)
