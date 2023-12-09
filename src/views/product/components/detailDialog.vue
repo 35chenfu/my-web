@@ -62,6 +62,7 @@
                 <el-upload class="avatar-uploader" :action="baseConfing.baseUrl + 'my-file/file/upload'"
                     :show-file-list="true" list-type="picture-card" :on-success="handleAvatarSuccess"
                     :on-remove="removeImage"
+                    :headers="headers"
                     v-model:file-list="fileList" accept=".png,.jpg,.jepg,.PNG,.JPG,.JEPG" multiple>
                     <el-icon class="avatar-uploader-icon">
                         <Plus />
@@ -191,6 +192,9 @@ let comboForm:any=reactive({
     sort:'',
     remarks:''
 })
+let headers=reactive({
+    Authorization:localStorage.getItem('token')
+})
 onMounted(() => {
     getMiniApplet()
     getMErchantList()
@@ -310,26 +314,23 @@ function submit() {
     })
 }
 function resetData(){
-    form = {
-        "id": '',
-        "title": '',  //标题
-        "serialNumber": '',  //商品编号
-        "description": '',  //说明
-        "flashSale": '2',  //限时抢购 1-是 2-否
-        "cutoffDate": "", //限时抢购截止日期
-        "rushPurchasePrice": 0, //限时抢购价格
-        "merchantId": "", //商家 ID
-        "merchantTel": "", //商家联系方式
-        "details": "", //详情
-        "bookingInstructions": "", //预定须知
-        "wxMenuId": "", //小程序菜单ID
-        "categoryId": "", //类别ID
-        "isSale": "1", //是否在售 1-是 2-否
-        "sort": '', //排序
-        "remarks": "", //备注
-        "commodityFileId": [], //商品图片集合
-        "commodityComboList": [  ]
-    }
+    form.id=''
+    form.title=''
+    form.serialNumber=''
+    form.description=''
+    form.flashSale=''
+    form.cutoffDate=''
+    form.rushPurchasePrice=''
+    form.merchantId=''
+    form.merchantTel=''
+    form.details=''
+    form.bookingInstructions=''
+    form.wxMenuId=''
+    form.isSale=''
+    form.sort=''
+    form.remarks=''
+    form.commodityFileId=[]
+    form.commodityComboList=[]
     comEditorRef.value.valueHtml=''
     comEditorRef2.value.valueHtml=''
     fileList.length=0
