@@ -66,6 +66,9 @@ const editorConfig = {
 editorConfig.MENU_CONF['uploadImage'] = {
     server: baseConfing.baseUrl + 'my-file/file/upload',
     fieldName: 'file',
+    headers:{
+        Authorization: localStorage.getItem('token')
+    },
     // 自定义插入图片
     customInsert(res: any, insertFn: any) {  // TS 语法
         // let imgUrl='http://125.124.0.124:8000/my-file/file/preview/5fb8f29796404931bf1f2f88774fdab6'
