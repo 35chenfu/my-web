@@ -1,14 +1,10 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router/index';
-import { nextTick } from 'vue';
-import baseConfing from '@/config'
-const version = '1.0.1';
+
+// axios实例
 const http:any = axios.create({
-    // baseURL: import.meta.env.VITE_APP_API_URL,
-    // baseURL: 'http://ra5vqu.natappfree.cc/',
-    baseURL: baseConfing.baseUrl,
-    // baseURL: '',
+    baseURL: '/api',
     timeout: 20000,
     headers: {
         'Content-Type': 'application/json',
@@ -16,6 +12,7 @@ const http:any = axios.create({
 });
 
 
+// 请求拦截器
 http.interceptors.request.use(
     (config: any) => {
         config.headers = {
@@ -29,36 +26,44 @@ http.interceptors.request.use(
         }
         return config;
     },
-    (err) => {
+    (err: any) => {
         Promise.reject(err);
-    },
+    }
 );
+
+
+
+// 响应拦截器
 http.interceptors.response.use(
-    (res) => {
+    (res: any) => {
+
         let resData=res.data
         let result=resData.result
         let code = res.data.code
-        
-        if(result==11012 || result==11013){
-            ElMessage.error('身份认证失效，请重新登录');
-            localStorage.clear()
-            router.push({path:'/login'})
-        }else if(result==11014 || result==11015){
-            ElMessage.error('账号别处登录，被挤下线');
-            localStorage.clear()
-            router.push({path:'/login'})
-        }
+
         if (res.data.success) {
             return Promise.resolve(res.data);
         } else {
-            ElMessage.error(res.data.errorDesc || res.error);
+            if(result==11012 || result==11013){
+                ElMessage.error('身份认证失效，请重新登录');
+                localStorage.clear()
+                router.push({path:'/login'})
+            }else if(result==11014 || result==11015){
+                ElMessage.error('账号别处登录，被挤下线');
+                localStorage.clear()
+                router.push({path:'/login'})
+            } else {
+                ElMessage.error(res.data.errorDesc || res.error);
+            }
+
             return Promise.reject(res.data);
         }
     },
-    (err) => {
+    (err: any) => {
        
         if (err.response.status == 401) {
-            // clearStorage();
+            ElMessage.error('身份认证失效，请重新登录');
+            localStorage.clear();
             router.push('/login');
         } else {
             ElMessage.error(err.response.data.error);

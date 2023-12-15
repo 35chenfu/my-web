@@ -4,7 +4,10 @@ import http from '@/utils/http.js';
 const userInfoStore = defineStore('userInfoStore', {
     state: () => ({
         userInfo: {
+            id:'',
             name:'',
+            email:'',
+            address:'',
             roleMenus:[]
         },
         

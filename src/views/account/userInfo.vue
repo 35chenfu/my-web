@@ -47,8 +47,7 @@ onMounted(()=>{
     formData.name=userInfo.name 
     formData.email=userInfo.email 
     formData.address=userInfo.address 
-    formData.password=userInfo.password 
-    formData.id=userInfo.id 
+    formData.id=userInfo.id
 })
 
 function changeInfo(){

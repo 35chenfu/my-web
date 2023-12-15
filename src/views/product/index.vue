@@ -7,7 +7,7 @@
             <el-table :data="tableList" border>
                 <el-table-column label="名称" prop="title" align="center"></el-table-column>
                 <el-table-column label="编号" prop="serialNumber" align="center"></el-table-column>
-                <el-table-column label="说明" prop="description" align="center"></el-table-column>
+                <!--<el-table-column label="说明" prop="description" align="center"></el-table-column>-->
                 <el-table-column label="是否在售" prop="isSale" align="center">
                     <template #default="scope">
                         <span>{{ scope.row.isSale==1?'是':'否' }}</span>
@@ -22,7 +22,7 @@
                 <el-table-column label="类型" prop="type" align="center"></el-table-column>
 
                 <el-table-column label="排序" prop="sort" align="center"></el-table-column>
-                <el-table-column label="备注" prop="remarks" align="center"></el-table-column>
+                <!--<el-table-column label="备注" prop="remarks" align="center"></el-table-column>-->
                 <el-table-column label="操作" align="center" width="250">
                     <template #default="scope">
                         <el-button type="primary" size="small" @click="btnHandle(scope.row, 3)">详情</el-button>

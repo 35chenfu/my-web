@@ -4,9 +4,9 @@
             <el-form-item label="商品标题" prop="title">
                 <el-input v-model="form.title" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="商品编号" prop="serialNumber" v-if="form.serialNumber">
+            <!--<el-form-item label="商品编号" prop="serialNumber" v-if="form.serialNumber">
                 <span>{{ form.serialNumber }}</span>
-            </el-form-item>
+            </el-form-item>-->
 
             <el-form-item label="商品说明" prop="description">
                 <el-input v-model="form.description" />

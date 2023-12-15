@@ -9,7 +9,7 @@
         </el-form-item>
 
         <el-form-item label="商品说明" prop="description">
-            <div class="con">{{ form.serialNumber }}</div>
+            <div class="con">{{ form.description }}</div>
         </el-form-item>
         <el-form-item label="限时抢购" prop="flashSale">
             

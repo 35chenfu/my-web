@@ -1,8 +1,9 @@
 import { ElMessage } from 'element-plus';
 import {JSEncrypt} from 'jsencrypt'
-import http from '@/utils/http';
+
 let timeout: any = null;
 
+// 防抖
 export const debounce = (func: any, wait = 500, ams = [], immediate = false) => {
     // 清除定时器
     if (timeout !== null) clearTimeout(timeout);
@@ -21,6 +22,8 @@ export const debounce = (func: any, wait = 500, ams = [], immediate = false) => 
         }, wait);
     }
 };
+
+// 判断浏览器
 export const windowBrowser = {
     getAgent: function (): any {
         var ua = window.navigator.userAgent.toLowerCase();
@@ -59,6 +62,8 @@ export const windowBrowser = {
     },
 };
 
+
+// 验证输入
 export const verifyInput = (type: string, val: string) => {
     let reg: any = '';
     switch (type) {
@@ -77,6 +82,8 @@ export const getAssetUrl = (image: any) => {
     return new URL(`../assets/images/${image}`, import.meta.url).href;
 };
 
+
+// 复制文本
 export const copyDomText = (id: any, shareTxt = i18n.global.t('news.hasBeenCopied')) => {
     const node = document.getElementById(id);
     if (node) {
@@ -98,6 +105,7 @@ export const copyDomText = (id: any, shareTxt = i18n.global.t('news.hasBeenCopie
 };
 
 
+// 加密
 export const encryptByPublicKey=(password:any)=>{
     let publicKey='MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3m6CGmIWVUBHV+ACqSQ3oRVB4xuRu84zzJ0eH/oNb+Qhs/jNVdHyCQ/mTuANGJS+LAqbAvVJOyNgcYfsSGm7n7fuuffr9YdXgkv4i6xqe6i+Ahinhr6Htcv7wej/s8lA0dhCnw74KuSm+0rhwiqqnPeMfj4mibSsfzL6XbranfQIDAQAB'
     let encrypt : JSEncrypt = new JSEncrypt()
