@@ -170,6 +170,15 @@ function btnHandle(data: any, val: any) {
       })
     })
   } else {
+    
+    http.get('my-system/role/userRoleInfo/' + data.id).then((res: any) => {
+      roleVal.value=roleList.find(el=>{
+        return res.result.roleName==el.roleName
+      }).id
+
+    })
+
+
     selectUserId.value = data.id
     roleDialog.value = true
   }

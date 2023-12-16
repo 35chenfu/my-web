@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router/index';
+import baseConfing from '@/config'
 
 // axios实例
 const http:any = axios.create({
-    baseURL: '/api',
+    baseURL:baseConfing.baseUrl,
     timeout: 20000,
     headers: {
         'Content-Type': 'application/json',

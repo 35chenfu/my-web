@@ -2,7 +2,7 @@
 	<div>
 		<div>权限设置</div>
 		
-		<el-select class="mt20" v-model="roleVal" placeholder="请选择角色">
+		<el-select class="mt20" v-model="roleVal" placeholder="请选择角色" @change="getRoleMenuIds">
 			<el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id" />
 		</el-select>
 		<div>
@@ -73,8 +73,20 @@ function unique(arr) {
 	}
 	return newArr
 }
-function submit() {
 
+function getRoleMenuIds(e:any){
+	let roleList=[]
+	http.get('my-system/role/roleMenuIds/'+e).then(res => {
+		res.result.forEach((el)=>{
+			let r=tableList.value.find((e)=>{
+				return e.id==el
+			})
+			roleList.push(r)
+		})
+		treeRef.value.setCheckedNodes(roleList)	
+	})
+}
+function submit() {
 	http.post('my-system/role/empowerRoleMenu', {
 		roleId: roleVal.value,
 		menuIds: selectMenus.value,
