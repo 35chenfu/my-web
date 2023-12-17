@@ -35,14 +35,14 @@
 
         </div>
         <el-dialog v-model="dialogTableVisible" width="40%">
-            <el-form :model="form" label-width="100px">
-                <el-form-item label="名称">
+            <el-form :model="form" label-width="100px"  :rules="rules" ref="formRef">
+                <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="图标">
+                <el-form-item label="图标" prop="icon">
 
                     <el-upload class="avatar-uploader" :action="baseConfing.baseUrl + 'my-file/file/upload'"
-                        :show-file-list="false" :on-success="handleAvatarSuccess">
+                        :show-file-list="false" :on-success="handleAvatarSuccess" :headers="headers">
                         <img v-if="iconUrl" :src="iconUrl" class="avatar" />
                         <el-icon v-else class="avatar-uploader-icon">
                             <Plus />
@@ -52,7 +52,7 @@
 
 
                 </el-form-item>
-                <el-form-item label="跳转Path">
+                <el-form-item label="跳转Path" prop="jumpPath">
                     <el-input v-model="form.jumpPath" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="是否启用">
@@ -62,7 +62,7 @@
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="排序">
+                <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="备注">
@@ -109,7 +109,7 @@ let form = ref({
     name: '',
     icon: '',
     jumpPath: '',
-    isEnable: '',
+    isEnable: '1',
     sort: '',
     remarks: '',
 })
@@ -117,6 +117,34 @@ let statusList = [
     { value: '1', label: '启用' },
     { value: '2', label: '禁用' },
 ]
+let headers=reactive({
+    Authorization:localStorage.getItem('token')
+})
+const iconRule=(rule:any,value:any,callback:any)=>{
+    if(!form.value.icon){
+        callback(new Error('请选择图片'))
+    }else{
+        callback()
+    }
+}
+
+
+let rules = reactive({
+	name: [
+		{ required: true, message: '请输入名称', trigger: 'blur' }
+	],
+	icon: [
+		{ required: true, validator: iconRule, trigger: 'blur' }
+	],
+	jumpPath: [
+		{ required: true, message: '请输入跳转路径', trigger: 'blur' }
+	],
+    sort: [
+		{ required: true, message: '请输入排序', trigger: 'blur' }
+	],
+	
+})
+let formRef=ref(null)
 let updateForm: any = ref({})
 onMounted(async () => {
     getRoleList()
@@ -130,6 +158,7 @@ const handleAvatarSuccess = (
   uploadFile
 ) => {
     form.value.icon=response.result.id
+    formRef.value.validateField('icon')
     iconUrl.value = URL.createObjectURL(uploadFile.raw!)
 }
 
@@ -140,10 +169,12 @@ watch(dialogTableVisible, (val) => {
             name: '',
             icon: '',
             jumpPath: '',
-            isEnable: '',
+            isEnable: '1',
             remarks: '',
             sort: '',
         }
+        iconUrl.value=''
+        formRef.value.resetFields()
     }
 })
 let roleList = reactive([])
@@ -176,7 +207,10 @@ function btnHandle(data: any, val: any) {
         })
     }
 }
-function submit() {
+async function submit() {
+    let res=await formRef.value.validate(()=>{})
+    if(!res)return
+
     let url = form.value.id ? 'my-system/wechatMenu/edit' : 'my-system/wechatMenu/add'
     let data = JSON.parse(JSON.stringify(form.value))
     http.post(url, data).then(res => {

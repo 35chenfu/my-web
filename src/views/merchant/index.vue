@@ -42,24 +42,24 @@
                 </el-form-item>
                 <el-form-item label="图标" prop="merchantIconId">
                     <el-upload class="avatar-uploader" :action="baseConfing.baseUrl + 'my-file/file/upload'"
-                        :show-file-list="false" :on-success="handleAvatarSuccess">
+                        :show-file-list="false" :on-success="handleAvatarSuccess" :headers="headers">
                         <img v-if="iconUrl" :src="iconUrl" class="avatar" />
                         <el-icon v-else class="avatar-uploader-icon">
                             <Plus />
                         </el-icon>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="简介">
+                <el-form-item label="简介" prop="briefIntroduction">
                     <el-input v-model="form.briefIntroduction" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="电话">
+                <el-form-item label="电话" prop="contactTel">
                     <el-input v-model="form.contactTel" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="类型">
+                <el-form-item label="类型" prop="type">
                     <el-input v-model="form.type" autocomplete="off" />
                 </el-form-item>
 
-                <el-form-item label="排序">
+                <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="备注">
@@ -96,7 +96,9 @@ let queryData = reactive({
 })
 let { tableList, getTableList, tableTotal } = getListHook(method, requestUrl, queryData)
 const router = useRouter();
-
+let headers=reactive({
+    Authorization:localStorage.getItem('token')
+})
 const phoneRule=(rule:any,value:any,callback:any)=>{
     if(!form.value.merchantIconId){
         callback(new Error('请选择图片'))
@@ -110,7 +112,19 @@ let rules=reactive({
     ],
     merchantIconId:[
         {required:true, validator: phoneRule, trigger: 'blur' }
-    ]
+    ],
+    briefIntroduction:[
+        {required:true,message:'请输入简介',trigger:'blur'}
+    ],
+    type:[
+        {required:true,message:'请输入类型',trigger:'blur'}
+    ],
+    contactTel:[
+        {required:true,message:'请输入联系方式',trigger:'blur'}
+    ],
+    sort:[
+        {required:true,message:'请输入排序',trigger:'blur'}
+    ],
 })
 
 let formRef=ref(null)
@@ -155,6 +169,8 @@ watch(dialogTableVisible, (val) => {
             briefIntroduction:'',
             type:'',
         }
+        formRef.value.resetFields()
+        iconUrl.value=''
     }
 })
 

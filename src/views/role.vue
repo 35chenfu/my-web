@@ -3,7 +3,7 @@
 <template>
 	<div class="user_page">
 		<div class="button">
-            <el-button @click="dialogTableVisible=true">新增角色</el-button>
+            <el-button @click="dialogTableVisible=true" type="primary">新增角色</el-button>
         </div>
         <div class="table_wrap mt20">
             <el-table :data="tableList" border >
@@ -31,14 +31,14 @@
             
         </div>
         <el-dialog v-model="dialogTableVisible" width="40%">
-            <el-form :model="form" label-width="100px">
-                <el-form-item label="角色标识" >
+            <el-form :model="form" label-width="100px" :rules="rules" ref="formRef">
+                <el-form-item label="角色标识" prop="roleIdentification">
                     <el-input v-model="form.roleIdentification" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="角色姓名" >
+                <el-form-item label="角色姓名"  prop="roleName">
                     <el-input v-model="form.roleName" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="排序" >
+                <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="备注" >
@@ -79,6 +79,21 @@ let form=ref({
 	remark:'',
     sort:'',
 })
+let rules = reactive({
+	roleIdentification: [
+		{ required: true, message: '请输入角色标识', trigger: 'blur' }
+	],
+	roleName: [
+		{ required: true, message: '请输入角色名称', trigger: 'blur' }
+	],
+	sort: [
+		{ required: true, message: '请输入排序', trigger: 'blur' }
+	],
+	
+})
+let formRef=ref(null)
+
+
 let updateForm:any=ref({})
 onMounted(async ()=>{
    
@@ -91,6 +106,7 @@ watch(dialogTableVisible,(val)=>{
 			remark:'',
 			sort:'',
         }
+        formRef.value.resetFields()
     }
 })
 
@@ -112,7 +128,9 @@ function btnHandle(data:any,val:any){
         })
     }
 }
-function submit(){
+async function submit(){
+    let res=await formRef.value.validate(()=>{})
+    if(!res)return
     let url=form.value.id?'my-system/role/update':'my-system/role/add'
     http.post(url,form.value).then(res=>{
         getTableList(method,requestUrl,queryData)

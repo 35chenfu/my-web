@@ -29,10 +29,10 @@
             </el-table-column>
             <el-table-column label="备注" prop="remark"></el-table-column>
 
-            <el-table-column label="操作" width="250">
+            <el-table-column label="操作" width="200">
                 <template #default="scope">
                     <el-button  type="primary" size="small" @click="btnHandle( scope.row, 1)">编辑</el-button>
-                    <el-button  type="primary"  size="small" @click="btnHandle( scope.row, 2)">添加子菜单</el-button>
+                    <el-button  type="primary" size="small" @click="btnHandle( scope.row, 2)">添加子菜单</el-button>
                     <el-button  type="warning" size="small" @click="btnHandle( scope.row, 3)">删除</el-button>
                 </template>
             </el-table-column>
@@ -49,14 +49,14 @@
             />
             </div>
         <el-dialog v-model="dialogTableVisible" width="40%">
-            <el-form :model="form" label-width="100px">
+            <el-form :model="form" label-width="100px" :rules="rules" ref="formRef">
                 <el-form-item label="上级菜单" v-if="form['parentMenName']">
                     <span>{{form['parentMenName']  }}</span>
                 </el-form-item>
-                <el-form-item label="菜单名称" >
+                <el-form-item label="菜单名称" prop="menuName">
                     <el-input v-model="form.menuName" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="类型" >
+                <el-form-item label="类型" prop="type">
                     <el-select v-model="form.type">
                         <el-option
                         v-for="item in typeList"
@@ -67,7 +67,7 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="图标" >
+                <el-form-item label="图标" v-if="!form['parentMenName']" prop="icon">
                     <el-dropdown trigger="click" popper-class="icon_dropdown">
                         <div class="el-dropdown-link cur_po row">
                             <el-icon :size="20" v-if="activeIcon">
@@ -93,13 +93,13 @@
                         </template>
                     </el-dropdown>
                 </el-form-item>
-                <el-form-item label="路由" >
+                <el-form-item label="路由" prop="path">
                     <el-input v-model="form.path" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="菜单组件" >
+                <el-form-item label="菜单组件" prop="component">
                     <el-input v-model="form.component" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="状态" >
+                <el-form-item label="状态" prop="status">
                     <el-select v-model="form.status">
                         <el-option
                         v-for="item in statusList"
@@ -110,7 +110,7 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="排序" >
+                <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="备注" >
@@ -174,6 +174,35 @@ let statusList=[
     {value:'2',label:'禁用'},
 ]
 let pidList=reactive([])
+const iconRule=(rule:any,value:any,callback:any)=>{
+    if(!form.value.icon){
+        callback(new Error('请选择图标'))
+    }else{
+        callback()
+    }
+}
+let rules=reactive({
+    menuName:[
+        {required:true,message:'请输入名称',trigger:'blur'}
+    ],
+    icon: [
+		{ required: true, validator: iconRule, trigger: 'blur' }
+	],
+    path:[
+        {required:true,message:'请输入路由',trigger:'blur'}
+    ],
+    type:[
+        {required:true,message:'请选择类型',trigger:'select'}
+    ],
+    component:[
+        {required:true,message:'请输入组件路劲',trigger:'blur'}
+    ],
+    sort:[
+        {required:true,message:'请输入排序',trigger:'blur'}
+    ],
+})
+
+let formRef=ref(null)
 
 
 onMounted(()=>{
@@ -200,6 +229,7 @@ watch(dialogTableVisible,(val)=>{
             sort:"",
             remark:'',
         }
+        formRef.value.resetFields()
     }
 })
 
@@ -239,8 +269,12 @@ function btnHandle(data:any,type:any){
 function selectIcon(data:any){
     activeIcon.value=data
     form.value.icon=data
+    formRef.value.validateField('icon')
 }
-function submit(){
+async function submit(){
+    let res=await formRef.value.validate(()=>{})
+    if(!res)return
+
     let url=form.value.id?'my-system/menu/update':'my-system/menu/add'
 
     http.post(url,form.value).then(res=>{

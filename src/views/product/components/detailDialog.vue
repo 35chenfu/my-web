@@ -1,6 +1,6 @@
 <template>
     <el-dialog v-model="dialogTableVisible" width="50%">
-        <el-form :model="form" label-width="100px">
+        <el-form :model="form" label-width="100px" :rules="pRules" ref="formRef">
             <el-form-item label="商品标题" prop="title">
                 <el-input v-model="form.title" autocomplete="off" />
             </el-form-item>
@@ -52,7 +52,7 @@
                 </el-select>
             </el-form-item>
 
-            <el-form-item label="排序">
+            <el-form-item label="排序" prop="sort">
                 <el-input-number :min="0" v-model="form.sort" autocomplete="off" />
             </el-form-item>
             <el-form-item label="备注">
@@ -69,7 +69,7 @@
                     </el-icon>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="商品套餐">
+            <el-form-item label="商品套餐" prop="commodityComboList">
                 <el-table :data="form.commodityComboList" border v-if="form.commodityComboList.length>0" style="margin-bottom: 20px;">
                     <el-table-column label="名称" prop="comboName" align="center"></el-table-column>
                     <el-table-column label="价格" prop="price" align="center"></el-table-column>
@@ -105,7 +105,7 @@
 
  
     <el-dialog v-model="comboVisible" width="35%" :destroy-on-close="true">
-        <el-form :model="comboForm" label-width="100px">
+        <el-form :model="comboForm" label-width="80px" :rules="comRules" ref="comFormRef">
             <el-form-item label="套餐名称" prop="comboName">
                 <el-input v-model="comboForm.comboName" ></el-input>
             </el-form-item>
@@ -179,11 +179,64 @@ let form: any = reactive({
     "remarks": "", //备注
     "commodityFileId": [], //商品图片集合
     "commodityComboList": []          //商品套餐
-        
-    
+})
+let formRef=ref(null)
+let pRules = reactive({
+	title: [
+		{ required: true, message: '请输入标题', trigger: 'blur' }
+	],
+    description: [
+		{ required: true, message: '请输入商品说明', trigger: 'blur' }
+	],
+    cutoffDate:[
+        { required: true, message: '请选择限时抢购截止日期', trigger: 'blur' }
+    ],
+    rushPurchasePrice:[
+        { required: true, message: '请输入限时抢购价格', trigger: 'blur' }
+    ],
+    merchantId:[
+        { required: true, message: '请选择商户', trigger: 'blur' }  
+    ],
+    wxMenuId:[
+        { required: true, message: '请选择小程序分类', trigger: 'blur' }  
+    ],
+    categoryId:[
+        { required: true, message: '请输入类别', trigger: 'blur' }
+    ],
+    sort: [
+		{ required: true, message: '请输入排序', trigger: 'blur' }
+	],
+    commodityFileId:[
+        { required: true, message: '请选择商品图片', trigger: 'blur' }
+    ],
+    commodityComboList:[
+        { required: true, message: '请选择商品套餐', trigger: 'blur' }
+    ],
+    details:[
+        { required: true, message: '请输入详情', trigger: 'blur' }
+    ]
+	
+})
+
+let comRules=reactive({
+    comboName:[
+        { required: true, message: '请输入名称', trigger: 'blur' }
+    ],
+    price:[
+        { required: true, message: '请输入套餐价格', trigger: 'blur' },
+    ],
+    inventory:[
+        { required: true, message: '请输入套餐库存', trigger: 'blur' }
+    ],
+    limitNum:[
+        { required: true, message: '请输入购买数量', trigger: 'blur' }
+    ],
+    sort:[
+        { required: true, message: '请输入排序', trigger: 'blur' }
+    ],
 })
 let comboVisible=ref(false)
-
+let comFormRef=ref(null)
 let comboForm:any=reactive({
     comboName:'',
     price:'',
@@ -204,16 +257,19 @@ watch(dialogTableVisible,(val)=>{
         resetData()
     }
 })
-function saveCombo(){
+async function saveCombo(){
+    let res=await comFormRef.value.validate(()=>{})
+    if(!res)return
     form.commodityComboList.push({...comboForm})
-    comboVisible.value=false
+    formRef.value.validateField('commodityComboList')
     comboForm.comboName=''
-        comboForm.price=''
-        comboForm.inventory=''
-        comboForm.limitNum=''
-        comboForm.sort=''
-        comboForm.remarks=''
-    
+    comboForm.price=''
+    comboForm.inventory=''
+    comboForm.limitNum=''
+    comboForm.sort=''
+    comboForm.remarks=''
+    comFormRef.value.resetFields()
+    comboVisible.value=false
 }
 function comboHandle(data:any){
     form.commodityComboList.splice(data.$index,1)
@@ -289,7 +345,7 @@ const handleAvatarSuccess = (
 ) => {
     // form.value.merchantIconId=response.result.id
     form.commodityFileId.push(response.result.id)
-    
+    formRef.value.validateField('commodityFileId')
 }
 function removeImage(e:any,es:any){
     let index=form.commodityFileId.findIndex((item)=>{
@@ -299,11 +355,14 @@ function removeImage(e:any,es:any){
 }
 function sendDetail(data: any) {
     form.details = data
+    formRef.value.validateField('details')
 }
 function sendPreDetail(data: any) {
     form.bookingInstructions = data
 }
-function submit() {
+async function submit() {
+    let res=await formRef.value.validate(()=>{})
+    if(!res)return
     let url = form.id ? 'my-merchandise/commodity/edit' : 'my-merchandise/commodity/add'
     let data = JSON.parse(JSON.stringify(form))
     http.post(url, data).then(res => {
@@ -334,6 +393,8 @@ function resetData(){
     comEditorRef.value.valueHtml=''
     comEditorRef2.value.valueHtml=''
     fileList.length=0
+    formRef.value.resetFields()
+    
 }
 
 
