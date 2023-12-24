@@ -1,13 +1,25 @@
 <template>
     <div class="user_page">
-        <div class="button">
-            <el-button @click="add" type="primary">新增商品</el-button>
-        </div>
+        <div class="search_form row">
+			<el-input class="input_box" v-model="queryData.title" placeholder="请输入商品名称"></el-input>
+			<el-input class="input_box ml20" v-model="queryData.serialNumber" placeholder="请输入商品编号"></el-input>
+            <el-select class="ml20" v-model="queryData.wxMenuId" :clearable="true" placeholder="请选择小程序类目">
+                <el-option v-for="(item,index) in miniAppleList" :key="index" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+			<el-button class="ml20" @click="searchForm" type="primary">搜索</el-button>
+			<el-button class="ml20"  @click="add" type="primary">新增商品</el-button>
+		</div>
+
+
         <div class="table_wrap mt20">
             <el-table :data="tableList" border>
                 <el-table-column label="名称" prop="title" align="center"></el-table-column>
                 <el-table-column label="编号" prop="serialNumber" align="center"></el-table-column>
-                <!--<el-table-column label="说明" prop="description" align="center"></el-table-column>-->
+                <!-- <el-table-column label="小程序分类" prop="description" align="center">
+                    <template #default="scope">
+                        <span>{{ getWxName(scope) }}</span>
+                    </template>
+                </el-table-column> -->
                 <el-table-column label="是否在售" prop="isSale" align="center">
                     <template #default="scope">
                         <span>{{ scope.row.isSale==1?'是':'否' }}</span>
@@ -27,7 +39,7 @@
                     <template #default="scope">
                         <el-button type="primary" size="small" @click="btnHandle(scope.row, 3)">详情</el-button>
                         <el-button type="primary" size="small" @click="btnHandle(scope.row, 1)">编辑</el-button>
-                        <el-button type="warning" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
+                        <el-button type="danger" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -57,9 +69,10 @@ let requestUrl = 'my-merchandise/commodity/list'
 let queryData = reactive({
     page: 1,
     size: 10,
-    name:'',
-    type:'',
-    contactTel:'',
+    title:'',
+    wxMenuId:'',
+    serialNumber:'',
+    categoryId:''
     
 })
 let { tableList, getTableList, tableTotal } = getListHook(method, requestUrl, queryData)
@@ -67,8 +80,25 @@ const router = useRouter();
 
 
 onMounted(async () => {
-
+    getMiniApplet()
 })
+
+function searchForm(){
+	queryData.page = 1
+	queryData.size = 10
+	getTableList(method, requestUrl, queryData)
+}
+
+let miniAppleList=ref([])
+function getMiniApplet() {
+    http.post('my-system/wechatMenu/list', {
+        page: 1,
+        size: 100
+    }).then((res: any) => {
+       miniAppleList.value=res.rows
+    })
+}
+
 
 function add(){
     proDetailRef.value.dialogTableVisible=true
@@ -99,7 +129,11 @@ function btnHandle(data: any, val: any) {
         })
     }
 }
-
+function getWxName(data:any){
+    return miniAppleList.value.find((e)=>{
+        return e.id==data.wxMenuId
+    })?.name || ''
+}
 
 function handleSizeChange(e: any) {
     queryData.size = e

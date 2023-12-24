@@ -2,9 +2,12 @@
 
 <template>
 	<div class="user_page">
-		<div class="button">
-            <el-button @click="dialogTableVisible=true" type="primary">新增角色</el-button>
-        </div>
+        <div class="search_form row">
+			<el-input class="input_box" v-model="queryData.keyword" placeholder="请输入角色名称"></el-input>
+			<el-button class="ml20" @click="searchForm" type="primary">搜索</el-button>
+			<el-button class="ml20"  @click="dialogTableVisible = true" type="primary">新增用户</el-button>
+		</div>
+
         <div class="table_wrap mt20">
             <el-table :data="tableList" border >
                 <el-table-column label="角色标识" prop="roleIdentification" align="center"></el-table-column>
@@ -14,7 +17,7 @@
                 <el-table-column label="操作"  align="center">
                     <template #default="scope">
                         <el-button  type="primary" size="small" @click="btnHandle( scope.row, 1)">编辑</el-button>
-                        <el-button  type="warning" size="small" @click="btnHandle( scope.row, 2)">删除</el-button>
+                        <el-button  type="danger" size="small" @click="btnHandle( scope.row, 2)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -109,6 +112,11 @@ watch(dialogTableVisible,(val)=>{
         formRef.value.resetFields()
     }
 })
+function searchForm(){
+		queryData.page = 1
+		queryData.size = 10
+		getTableList(method, requestUrl, queryData)
+	}
 
 function btnHandle(data:any,val:any){
     if(val==1){

@@ -1,7 +1,7 @@
-:root {
-  --el-color-primary: #f8949a !important;
-  --el-button-bg-primary: #f8949a !important;
-}
+// :root {
+//   --el-color-primary: #f8949a !important;
+//   --el-button-bg-primary: #f8949a !important;
+// }
 
 body,
 p {
@@ -147,6 +147,9 @@ p {
   background-color: red;
 }
 
+.input_box{
+  width: 200px !important;
+}
 @media screen and (max-width: 480px) {
 
   select,

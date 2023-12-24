@@ -1,57 +1,57 @@
 <template>
     <el-button type="primary" @click="router.back()">返回</el-button>
-    <el-form :model="form" label-width="100px">
-        <el-form-item label="商品标题" prop="title">
-            <div class="con">{{ form.title }}</div>
-        </el-form-item>
-        <el-form-item label="商品编号" prop="serialNumber" v-if="form.serialNumber">
-            <div class="con">{{ form.serialNumber }}</div>
-        </el-form-item>
+    <el-form class="mt20" :model="form" label-width="100px">
+        <div class="row form_list">
+            <el-form-item label="商品标题" prop="title">
+                <div class="con">{{ form.title }}</div>
+            </el-form-item>
+            <el-form-item label="商品编号" prop="serialNumber" v-if="form.serialNumber">
+                <div class="con">{{ form.serialNumber }}</div>
+            </el-form-item>
 
-        <el-form-item label="商品说明" prop="description">
-            <div class="con">{{ form.description }}</div>
-        </el-form-item>
-        <el-form-item label="限时抢购" prop="flashSale">
+            <el-form-item label="商品说明" prop="description">
+                <div class="con">{{ form.description }}</div>
+            </el-form-item>
+            <el-form-item label="限时抢购" prop="flashSale">
+
+                <div class="con">{{ form.flashSale == 1 ? '是' : '否' }}</div>
+            </el-form-item>
+
+            <el-form-item label="抢购截止日期" prop="cutoffDate" v-if="form.flashSale == 1">
+                <div class="con">{{ form.cutoffDate }}</div>
+            </el-form-item>
+            <el-form-item label="限时抢购价格" prop="rushPurchasePrice" v-if="form.flashSale == 1">
+                <div class="con">{{ form.rushPurchasePrice }}</div>
+            </el-form-item>
+            <el-form-item label="已选择商户" prop="merchantId">
+                <div class="con">{{ merchantName }}</div>
+            </el-form-item>
             
-            <div class="con">{{ form.flashSale==1?'是':'否' }}</div>
-        </el-form-item>
+        </div>
+        <div class="row form_list">
+            <el-form-item label="商户联系方式" prop="merchantTel" v-if="form.merchantId">
+                <div class="con">{{ form.merchantTel }}</div>
+            </el-form-item>
 
-        <el-form-item label="抢购截止日期" prop="cutoffDate" v-if="form.flashSale == 1">
-            <div class="con">{{ form.cutoffDate }}</div>
-        </el-form-item>
-        <el-form-item label="限时抢购价格" prop="rushPurchasePrice" v-if="form.flashSale == 1">
-            <div class="con">{{ form.rushPurchasePrice }}</div>
-        </el-form-item>
-        <el-form-item label="已选择商户" prop="merchantId">
-            <div class="con">{{ merchantName }}</div>
-        </el-form-item>
-        <el-form-item label="商户联系方式" prop="merchantTel" v-if="form.merchantId">
-            <div class="con">{{ form.merchantTel }}</div>
-        </el-form-item>
+            <el-form-item label="小程序分类" prop="wxMenuId">
+                <div class="con">{{ miniAppletName }}</div>
+            </el-form-item>
+            <el-form-item label="类别选择" prop="categoryId">
+                <div class="con">{{ form.categoryId }}</div>
+            </el-form-item>
 
-        <el-form-item label="小程序分类" prop="wxMenuId">
-            <div class="con">{{ miniAppletName }}</div>
-        </el-form-item>
-        <el-form-item label="类别选择" prop="categoryId">
-            <div class="con">{{ form.categoryId }}</div>
-        </el-form-item>
+            <el-form-item label="是否在售" prop="isSale">
+                <div class="con">{{ form.flashSale == 1 ? '是' : '否' }}</div>
+            </el-form-item>
 
-        <el-form-item label="是否在售" prop="isSale">
-            <div class="con">{{ form.flashSale==1?'是':'否' }}</div>
-        </el-form-item>
-
-        <el-form-item label="备注">
-            <div class="con">{{ form.备注}}</div>
-        </el-form-item>
-        <el-form-item label="商品图片" prop="commodityFileId" v-if="form.commodityDetails.length>0">
+            <el-form-item label="备注">
+                <div class="con">{{ form.备注 }}</div>
+            </el-form-item>
+        </div>
+        <el-form-item label="商品图片" prop="commodityFileId" v-if="form.commodityDetails.length > 0">
             <div class="imgs">
-                <el-image 
-                v-for="(item,index) in form.commodityDetails" 
-                :key="index" 
-                :src="baseConfing.baseUrl+'my-file/file/preview/'+item.fileId"
-                class="p_img"
-                
-                ></el-image>
+                <el-image v-for="(item, index) in form.commodityDetails" :key="index"
+                    :src="baseConfing.baseUrl + 'my-file/file/preview/' + item.fileId" class="p_img"></el-image>
             </div>
         </el-form-item>
         <el-form-item label="商品套餐">
@@ -72,7 +72,6 @@
             <div v-html="form.bookingInstructions"></div>
         </el-form-item>
     </el-form>
-
 </template>
 <script lang="ts" setup>
 import { ref, reactive, getCurrentInstance, onMounted, onActivated, nextTick, computed, watch } from 'vue';
@@ -109,39 +108,39 @@ let form: any = reactive({
     "sort": '', //排序
     "remarks": "", //备注
     "commodityFileId": [], //商品图片集合
-    commodityDetails:[],
+    commodityDetails: [],
     "commodityComboList": []          //商品套餐
 })
 
 
 onMounted(() => {
-   
+
     getDetail(route.query.id)
 })
 
 
-let miniAppletName=ref('')
+let miniAppletName = ref('')
 let miniAppletList = reactive([])
 function getMiniApplet() {
     http.post('my-system/wechatMenu/list', {
         page: 1,
         size: 100
     }).then((res: any) => {
-        miniAppletName.value=res.rows.find((el:any)=>{
-            return el.id==form.wxMenuId
+        miniAppletName.value = res.rows.find((el: any) => {
+            return el.id == form.wxMenuId
         }).name
     })
 }
 
 let merchantList = reactive([])
-let merchantName=ref('')
+let merchantName = ref('')
 function getMErchantList() {
     http.post('my-merchant/merchant/list', {
         page: 1,
         size: 100
     }).then((res: any) => {
-        merchantName.value=res.rows.find((el:any)=>{
-            return el.id==form.merchantId
+        merchantName.value = res.rows.find((el: any) => {
+            return el.id == form.merchantId
         }).name
     })
 }
@@ -236,11 +235,13 @@ function submit() {
     }
 
 }
-.imgs{
+
+.imgs {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    .p_img{
+
+    .p_img {
         height: 100px;
         margin-right: 20px;
         object-fit: cover;
@@ -254,5 +255,8 @@ function submit() {
     width: 178px;
     height: 178px;
     text-align: center;
+}
+.form_list{
+    flex-wrap: wrap;
 }
 </style>

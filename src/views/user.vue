@@ -1,7 +1,13 @@
 <template>
 	<div class="user_page">
+		<div class="search_form row">
+			<el-input class="input_box" v-model="queryData.keyword" placeholder="请输入用户姓名"></el-input>
+			<el-button class="ml20" @click="searchForm" type="primary">搜索</el-button>
+			<el-button class="ml20"  @click="dialogTableVisible = true" type="primary">新增用户</el-button>
+		</div>
+
 		<div class="button">
-			<el-button @click="dialogTableVisible = true" type="primary">新增用户</el-button>
+			
 		</div>
 		<div class="table_wrap mt20">
 			<el-table :data="tableList" border>
@@ -15,7 +21,7 @@
 				<el-table-column label="操作" align="center" width="250">
 					<template #default="scope">
 						<el-button type="primary" size="small" @click="btnHandle(scope.row, 1)">编辑</el-button>
-						<el-button type="warning" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
+						<el-button type="danger" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
 						<el-button type="warning" size="small" @click="btnHandle(scope.row, 3)">角色设置</el-button>
 					</template>
 				</el-table-column>
@@ -156,6 +162,11 @@
 	let roleList = reactive([])
 	let roleVal = ref('')
 	let selectUserId = ref('')
+	function searchForm(){
+		queryData.page = 1
+		queryData.size = 10
+		getTableList(method, requestUrl, queryData)
+	}
 
 	// 获取角色列表
 	function getRoleList() {

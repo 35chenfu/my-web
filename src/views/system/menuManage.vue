@@ -2,9 +2,12 @@
 
 <template>
     <div class="page">
-        <div class="btn-wrap">
-            <el-button type="primary" @click="addMenu">添加菜单</el-button>
-        </div>
+        <div class="search_form row">
+			<el-input class="input_box" v-model="queryData.menuName" placeholder="请输入菜单名称"></el-input>
+			<el-button class="ml20" @click="searchForm" type="primary">搜索</el-button>
+			<el-button class="ml20"  @click="addMenu" type="primary">新增菜单</el-button>
+		</div>
+       
         <el-table class="mt20" :data="tableList" border row-key="id"  :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
             <el-table-column label="菜单名称" prop="menuName"> </el-table-column>
             <el-table-column label="图标" prop="icon">
@@ -33,7 +36,7 @@
                 <template #default="scope">
                     <el-button  type="primary" size="small" @click="btnHandle( scope.row, 1)">编辑</el-button>
                     <el-button  type="primary" size="small" @click="btnHandle( scope.row, 2)">添加子菜单</el-button>
-                    <el-button  type="warning" size="small" @click="btnHandle( scope.row, 3)">删除</el-button>
+                    <el-button  type="danger" size="small" @click="btnHandle( scope.row, 3)">删除</el-button>
                 </template>
             </el-table-column>
 
@@ -100,7 +103,8 @@
                     <el-input v-model="form.component" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="状态" prop="status">
-                    <el-select v-model="form.status">
+                    <el-switch v-model="form.status"></el-switch>
+                    <!-- <el-select v-model="form.status">
                         <el-option
                         v-for="item in statusList"
                         :key="item.value"
@@ -108,7 +112,7 @@
                         :value="item.value"
                         placeholder="请选择状态"
                         />
-                    </el-select>
+                    </el-select> -->
                 </el-form-item>
                 <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" autocomplete="off" />
@@ -156,7 +160,7 @@ let form:any=ref({
     icon:'',
     path:'',
     component:'',
-    status:'1',
+    status:true,
     sort:"",
     remark:'',
 })
@@ -181,6 +185,7 @@ const iconRule=(rule:any,value:any,callback:any)=>{
         callback()
     }
 }
+
 let rules=reactive({
     menuName:[
         {required:true,message:'请输入名称',trigger:'blur'}
@@ -225,7 +230,7 @@ watch(dialogTableVisible,(val)=>{
             icon:'',
             path:'',
             component:'',
-            status:'1',
+            status:true,
             sort:"",
             remark:'',
         }
@@ -235,8 +240,10 @@ watch(dialogTableVisible,(val)=>{
 
 
 
-function swithcChange(e:any,data:any){
-
+function searchForm(){
+	queryData.page = 1
+	queryData.size = 10
+	getTableList(method, requestUrl, queryData)
 }
 function addMenu(){
     form.value.pid=0
@@ -245,6 +252,7 @@ function addMenu(){
 let selectDMenuInfo:any=ref({})
 function btnHandle(data:any,type:any){
     selectDMenuInfo.value=JSON.parse(JSON.stringify(data))
+    selectDMenuInfo.value.status=selectDMenuInfo.value.status==1?true:false
     if(type==1){
         form.value=selectDMenuInfo.value
         dialogTableVisible.value=true
@@ -274,10 +282,10 @@ function selectIcon(data:any){
 async function submit(){
     let res=await formRef.value.validate(()=>{})
     if(!res)return
-
+    let data=JSON.parse(JSON.stringify(form.value))
     let url=form.value.id?'my-system/menu/update':'my-system/menu/add'
-
-    http.post(url,form.value).then(res=>{
+    data.status=form.value.status?'1':'2'
+    http.post(url,data).then(res=>{
         getTableList(method,requestUrl,queryData)
         
         dialogTableVisible.value=false

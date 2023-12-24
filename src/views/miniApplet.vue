@@ -2,9 +2,11 @@
 
 <template>
     <div class="user_page">
-        <div class="button">
-            <el-button @click="dialogTableVisible = true" type="primary">新增分类</el-button>
-        </div>
+        <div class="search_form row">
+			<el-input class="input_box" v-model="queryData.keyword" placeholder="请输入分类名称"></el-input>
+			<el-button class="ml20" @click="searchForm" type="primary">搜索</el-button>
+			<el-button class="ml20"  @click="dialogTableVisible = true" type="primary">新增分类</el-button>
+		</div>
         <div class="table_wrap mt20">
             <el-table :data="tableList" border>
                 <el-table-column label="名称" prop="name" align="center"></el-table-column>
@@ -23,7 +25,7 @@
                 <el-table-column label="操作" align="center" width="250">
                     <template #default="scope">
                         <el-button type="primary" size="small" @click="btnHandle(scope.row, 1)">编辑</el-button>
-                        <el-button type="warning" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
+                        <el-button type="danger" size="small" @click="btnHandle(scope.row, 2)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -48,18 +50,16 @@
                             <Plus />
                         </el-icon>
                     </el-upload>
-
-
-
                 </el-form-item>
                 <el-form-item label="跳转Path" prop="jumpPath">
                     <el-input v-model="form.jumpPath" autocomplete="off" />
                 </el-form-item>
                 <el-form-item label="是否启用">
-                    <el-select v-model="form.isEnable">
+                    <el-switch v-model="form.isEnable"></el-switch>
+                    <!-- <el-select v-model="form.isEnable">
                         <el-option v-for="item in statusList" :key="item.value" :label="item.label" :value="item.value"
                             placeholder="请选择状态" />
-                    </el-select>
+                    </el-select> -->
                 </el-form-item>
 
                 <el-form-item label="排序" prop="sort">
@@ -109,7 +109,7 @@ let form = ref({
     name: '',
     icon: '',
     jumpPath: '',
-    isEnable: '1',
+    isEnable: true,
     sort: '',
     remarks: '',
 })
@@ -149,6 +149,13 @@ let updateForm: any = ref({})
 onMounted(async () => {
     getRoleList()
 })
+
+function searchForm(){
+	queryData.page = 1
+	queryData.size = 10
+	getTableList(method, requestUrl, queryData)
+}
+
 function selectIcon(data: any) {
     activeIcon.value = data
     form.value.icon = data
@@ -169,7 +176,7 @@ watch(dialogTableVisible, (val) => {
             name: '',
             icon: '',
             jumpPath: '',
-            isEnable: '1',
+            isEnable: true,
             remarks: '',
             sort: '',
         }
@@ -191,7 +198,9 @@ function getRoleList() {
 }
 function btnHandle(data: any, val: any) {
     if (val == 1) {
+        data.isEnable=data.isEnable=='1'?true:false
         form.value = JSON.parse(JSON.stringify(data))
+
         iconUrl.value= baseConfing.baseUrl+ 'my-file/file/preview/'+form.value.icon 
         dialogTableVisible.value = true
     } else if (val == 2) {
@@ -213,6 +222,7 @@ async function submit() {
 
     let url = form.value.id ? 'my-system/wechatMenu/edit' : 'my-system/wechatMenu/add'
     let data = JSON.parse(JSON.stringify(form.value))
+    data.isEnable=form.value.isEnable?'1':'2'
     http.post(url, data).then(res => {
         getTableList(method, requestUrl, queryData)
         dialogTableVisible.value = false

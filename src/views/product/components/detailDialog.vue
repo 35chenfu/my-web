@@ -79,7 +79,7 @@
                     <el-table-column label="备注" prop="remarks" align="center"></el-table-column>
                     <el-table-column label="操作" prop="" align="center"  >
                         <template #default="scope">
-                            <el-button type="warning" size="small" @click="comboHandle(scope)">删除</el-button>
+                            <el-button type="danger" size="small" @click="comboHandle(scope)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
