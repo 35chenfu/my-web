@@ -96,7 +96,6 @@ function getSetMenu(data:any){
 					}
 				})
 			})
-
 		}else{
 			data.forEach((d)=>{
 				if(d==e.id){
@@ -108,7 +107,6 @@ function getSetMenu(data:any){
 	})
 	treeRef.value.setCheckedNodes(roleList)
 }
-
 
 function submit() {
 	http.post('my-system/role/empowerRoleMenu', {
