@@ -61,6 +61,7 @@ function handleCheckChange(e: any) {
 	})
 	let menuArr = unique(arr); // 去除重复的节点
 	selectMenus.value=menuArr
+	
 }
 // 数组去重
 function unique(arr) {
@@ -77,15 +78,38 @@ function unique(arr) {
 function getRoleMenuIds(e:any){
 	let roleList=[]
 	http.get('my-system/role/roleMenuIds/'+e).then(res => {
-		res.result.forEach((el)=>{
-			let r=tableList.value.find((e)=>{
-				return e.id==el
-			})
-			roleList.push(r)
-		})
-		treeRef.value.setCheckedNodes(roleList)	
+		
+		getSetMenu(res.result)
 	})
 }
+
+function getSetMenu(data:any){
+	console.log('data',data)
+	let list=JSON.parse(JSON.stringify(tableList.value)) 
+	let roleList=[]
+	list.forEach((e:any)=>{
+		if(e.children?.length>0){
+			e.children.forEach((c:any)=>{
+				data.forEach((d)=>{
+					if(d==c.id){
+						roleList.push(c)
+					}
+				})
+			})
+
+		}else{
+			data.forEach((d)=>{
+				if(d==e.id){
+					roleList.push(e)
+				}
+			})
+			
+		}
+	})
+	treeRef.value.setCheckedNodes(roleList)
+}
+
+
 function submit() {
 	http.post('my-system/role/empowerRoleMenu', {
 		roleId: roleVal.value,

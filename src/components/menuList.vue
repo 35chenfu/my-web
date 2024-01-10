@@ -98,10 +98,10 @@ const handleClose = (key: string, keyPath: string[]) => {
 <style scoped lang="scss">
 .menu_page{
 	width: 70px;
-	height: 100%;
+	height:82vh;
 	border-right: 1px solid #eee;
 	transition: all 0.3s;
-	overflow: hidden;
+	overflow-y: scroll;
 	&.show{
 		width: 200px;
 	}
